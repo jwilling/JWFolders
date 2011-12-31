@@ -2,7 +2,7 @@
 `JWFolders` is a class that attempts to mimic the folder animation present on the iOS SpringBoard.  This is my first public repository, as well as my first open-source class, so mistakes were most likely made.  Apologies.
 
 ##Preview
-`JWFolders` is being used in my commercial app, QuickWeather.  Here's what it looks like in real use:
+`JWFolders` is being used in my commercial app, QuickWeather.  Depicted here is a beta version of the app:
 
 ![ExampleFolder](http://www.appjon.com/assets/QuickWeather_folder.png)
 
