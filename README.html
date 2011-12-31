@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"
+	"http://www.w3.org/TR/2001/REC-MathML2-20010221/dtd/xhtml-math11-f.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta name="Format" content="complete" />
+	</head>
+<body>
+
+<h2 id="information">Information</h2>
+
+<p><code>JWFolders</code> is a class that attempts to mimic the folder animation present on the iOS SpringBoard.  This is my first public repository, as well as my first open-source class, so mistakes were most likely made.  Apologies.</p>
+
+<h2 id="preview">Preview</h2>
+
+<p><code>JWFolders</code> is being used in my commercial app, QuickWeather.  Depicted here is a beta version of the app:</p>
+
+<p><img id="examplefolder" src="http://www.appjon.com/assets/QuickWeather_folder.png" alt="ExampleFolder" title="" /></p>
+
+<h2 id="usage">Usage</h2>
+
+<p>Just include the entire folder, <code>JWFolders</code>, in your project.  Import <code>JWFolders.h</code> in the class in which you wish to create the folder.</p>
+
+<pre><code>#import "JWFolders.h"</code></pre>
+
+<p>In the header there is complete documentation.  Alternatively, you can see the demo project for an example.</p>
+
+<h2 id="arc">ARC</h2>
+
+<p>The project currently uses <a href="http://clang.llvm.org/docs/AutomaticReferenceCounting.html">Automatic Reference Counting</a>, which means that if your project does not use ARC there will be memory leaks.  There are no plans to create a non-ARC branch at this time.</p>
+
+<h2 id="license">License</h2>
+
+<p><code>JWFolders</code> is licensed under the <a href="http://www.opensource.org/licenses/bsd-license">BSD License</a>.</p>
+
+<h2 id="todo">ToDo</h2>
+
+<p>Quite a bit.  Currently, the animation start is somewhat delayed, and should receive some significant optimization.  Please feel free to fork the project and improve it as much as possible!</p>
+</body>
+</html>
