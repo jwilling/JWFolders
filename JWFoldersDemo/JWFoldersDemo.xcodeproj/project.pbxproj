@@ -17,10 +17,10 @@
 		AB2CB9D214AE8CF30072F455 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB2CB9D014AE8CF30072F455 /* ViewController.xib */; };
 		AB2CB9DF14AE8D3D0072F455 /* FolderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB2CB9DD14AE8D3D0072F455 /* FolderViewController.m */; };
 		AB2CB9E014AE8D3D0072F455 /* FolderViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB2CB9DE14AE8D3D0072F455 /* FolderViewController.xib */; };
-		AB2CB9ED14AE8D820072F455 /* JWFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = AB2CB9E814AE8D820072F455 /* JWFolders.m */; };
-		AB2CB9EE14AE8D820072F455 /* UIScreen+Scale.m in Sources */ = {isa = PBXBuildFile; fileRef = AB2CB9EA14AE8D820072F455 /* UIScreen+Scale.m */; };
-		AB2CB9EF14AE8D820072F455 /* UIView+Screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = AB2CB9EC14AE8D820072F455 /* UIView+Screenshot.m */; };
 		AB2CB9F314AE8DAB0072F455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB2CB9F114AE8DA30072F455 /* QuartzCore.framework */; };
+		AB9280CA14AF8BC5000578BD /* JWFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C514AF8BC5000578BD /* JWFolders.m */; };
+		AB9280CB14AF8BC5000578BD /* UIScreen+Scale.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */; };
+		AB9280CC14AF8BC5000578BD /* UIView+Screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,13 +40,13 @@
 		AB2CB9DC14AE8D3C0072F455 /* FolderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderViewController.h; sourceTree = "<group>"; };
 		AB2CB9DD14AE8D3D0072F455 /* FolderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderViewController.m; sourceTree = "<group>"; };
 		AB2CB9DE14AE8D3D0072F455 /* FolderViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FolderViewController.xib; sourceTree = "<group>"; };
-		AB2CB9E714AE8D820072F455 /* JWFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWFolders.h; sourceTree = "<group>"; };
-		AB2CB9E814AE8D820072F455 /* JWFolders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JWFolders.m; sourceTree = "<group>"; };
-		AB2CB9E914AE8D820072F455 /* UIScreen+Scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+Scale.h"; sourceTree = "<group>"; };
-		AB2CB9EA14AE8D820072F455 /* UIScreen+Scale.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+Scale.m"; sourceTree = "<group>"; };
-		AB2CB9EB14AE8D820072F455 /* UIView+Screenshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Screenshot.h"; sourceTree = "<group>"; };
-		AB2CB9EC14AE8D820072F455 /* UIView+Screenshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Screenshot.m"; sourceTree = "<group>"; };
 		AB2CB9F114AE8DA30072F455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		AB9280C414AF8BC5000578BD /* JWFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWFolders.h; sourceTree = "<group>"; };
+		AB9280C514AF8BC5000578BD /* JWFolders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JWFolders.m; sourceTree = "<group>"; };
+		AB9280C614AF8BC5000578BD /* UIScreen+Scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+Scale.h"; sourceTree = "<group>"; };
+		AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+Scale.m"; sourceTree = "<group>"; };
+		AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Screenshot.h"; sourceTree = "<group>"; };
+		AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Screenshot.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,7 +103,7 @@
 				AB2CB9DC14AE8D3C0072F455 /* FolderViewController.h */,
 				AB2CB9DD14AE8D3D0072F455 /* FolderViewController.m */,
 				AB2CB9DE14AE8D3D0072F455 /* FolderViewController.xib */,
-				AB2CB9E614AE8D820072F455 /* JWFolders */,
+				AB9280C314AF8BC5000578BD /* JWFolders */,
 				AB2CB9C214AE8CF30072F455 /* Supporting Files */,
 			);
 			path = JWFoldersDemo;
@@ -120,18 +120,18 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		AB2CB9E614AE8D820072F455 /* JWFolders */ = {
+		AB9280C314AF8BC5000578BD /* JWFolders */ = {
 			isa = PBXGroup;
 			children = (
-				AB2CB9E714AE8D820072F455 /* JWFolders.h */,
-				AB2CB9E814AE8D820072F455 /* JWFolders.m */,
-				AB2CB9E914AE8D820072F455 /* UIScreen+Scale.h */,
-				AB2CB9EA14AE8D820072F455 /* UIScreen+Scale.m */,
-				AB2CB9EB14AE8D820072F455 /* UIView+Screenshot.h */,
-				AB2CB9EC14AE8D820072F455 /* UIView+Screenshot.m */,
+				AB9280C414AF8BC5000578BD /* JWFolders.h */,
+				AB9280C514AF8BC5000578BD /* JWFolders.m */,
+				AB9280C614AF8BC5000578BD /* UIScreen+Scale.h */,
+				AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */,
+				AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */,
+				AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */,
 			);
 			name = JWFolders;
-			path = ../../../JWFolders;
+			path = ../../JWFolders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -201,9 +201,9 @@
 				AB2CB9CC14AE8CF30072F455 /* AppDelegate.m in Sources */,
 				AB2CB9CF14AE8CF30072F455 /* ViewController.m in Sources */,
 				AB2CB9DF14AE8D3D0072F455 /* FolderViewController.m in Sources */,
-				AB2CB9ED14AE8D820072F455 /* JWFolders.m in Sources */,
-				AB2CB9EE14AE8D820072F455 /* UIScreen+Scale.m in Sources */,
-				AB2CB9EF14AE8D820072F455 /* UIView+Screenshot.m in Sources */,
+				AB9280CA14AF8BC5000578BD /* JWFolders.m in Sources */,
+				AB9280CB14AF8BC5000578BD /* UIScreen+Scale.m in Sources */,
+				AB9280CC14AF8BC5000578BD /* UIView+Screenshot.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
