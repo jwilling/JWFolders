@@ -7,18 +7,14 @@
  */
 
 #import "UIView+Screenshot.h"
+#import "UIScreen+Scale.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation UIView (Screenshot)
 
 - (UIImage *)screenshot {
-    CGFloat scale = 1.0;
-    if([[UIScreen mainScreen]respondsToSelector:@selector(scale)]) {        
-        CGFloat tmp = [[UIScreen mainScreen]scale];
-        if (tmp > 1.5) {
-            scale = 2.0;    
-        }
-    } 
+    CGFloat scale = [UIScreen screenScale];
+	
     if(scale > 1.5) {
         UIGraphicsBeginImageContextWithOptions(self.frame.size, NO, scale);
     } else {
