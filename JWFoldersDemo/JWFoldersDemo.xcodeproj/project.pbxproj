@@ -18,10 +18,10 @@
 		AB2CB9DF14AE8D3D0072F455 /* FolderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AB2CB9DD14AE8D3D0072F455 /* FolderViewController.m */; };
 		AB2CB9E014AE8D3D0072F455 /* FolderViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB2CB9DE14AE8D3D0072F455 /* FolderViewController.xib */; };
 		AB2CB9F314AE8DAB0072F455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB2CB9F114AE8DA30072F455 /* QuartzCore.framework */; };
+		AB55EC6214BE09D400FB5BB0 /* wallpaper.png in Resources */ = {isa = PBXBuildFile; fileRef = AB55EC6114BE09D400FB5BB0 /* wallpaper.png */; };
 		AB9280CA14AF8BC5000578BD /* JWFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C514AF8BC5000578BD /* JWFolders.m */; };
 		AB9280CB14AF8BC5000578BD /* UIScreen+Scale.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */; };
 		AB9280CC14AF8BC5000578BD /* UIView+Screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */; };
-		ABF7821014BCEC0F0026C74B /* rain.png in Resources */ = {isa = PBXBuildFile; fileRef = ABF7820F14BCEC0F0026C74B /* rain.png */; };
 		ABF7821314BCED8B0026C74B /* noise.png in Resources */ = {isa = PBXBuildFile; fileRef = ABF7821214BCED8B0026C74B /* noise.png */; };
 /* End PBXBuildFile section */
 
@@ -43,13 +43,13 @@
 		AB2CB9DD14AE8D3D0072F455 /* FolderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderViewController.m; sourceTree = "<group>"; };
 		AB2CB9DE14AE8D3D0072F455 /* FolderViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FolderViewController.xib; sourceTree = "<group>"; };
 		AB2CB9F114AE8DA30072F455 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		AB55EC6114BE09D400FB5BB0 /* wallpaper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wallpaper.png; sourceTree = "<group>"; };
 		AB9280C414AF8BC5000578BD /* JWFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWFolders.h; sourceTree = "<group>"; };
 		AB9280C514AF8BC5000578BD /* JWFolders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JWFolders.m; sourceTree = "<group>"; };
 		AB9280C614AF8BC5000578BD /* UIScreen+Scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+Scale.h"; sourceTree = "<group>"; };
 		AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+Scale.m"; sourceTree = "<group>"; };
 		AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Screenshot.h"; sourceTree = "<group>"; };
 		AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Screenshot.m"; sourceTree = "<group>"; };
-		ABF7820F14BCEC0F0026C74B /* rain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rain.png; sourceTree = "<group>"; };
 		ABF7821214BCED8B0026C74B /* noise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noise.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,7 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				ABF7821214BCED8B0026C74B /* noise.png */,
-				ABF7820F14BCEC0F0026C74B /* rain.png */,
+				AB55EC6114BE09D400FB5BB0 /* wallpaper.png */,
 				AB2CB9C314AE8CF30072F455 /* JWFoldersDemo-Info.plist */,
 				AB2CB9C414AE8CF30072F455 /* InfoPlist.strings */,
 				AB2CB9C714AE8CF30072F455 /* main.m */,
@@ -193,8 +193,8 @@
 				AB2CB9C614AE8CF30072F455 /* InfoPlist.strings in Resources */,
 				AB2CB9D214AE8CF30072F455 /* ViewController.xib in Resources */,
 				AB2CB9E014AE8D3D0072F455 /* FolderViewController.xib in Resources */,
-				ABF7821014BCEC0F0026C74B /* rain.png in Resources */,
 				ABF7821314BCED8B0026C74B /* noise.png in Resources */,
+				AB55EC6214BE09D400FB5BB0 /* wallpaper.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

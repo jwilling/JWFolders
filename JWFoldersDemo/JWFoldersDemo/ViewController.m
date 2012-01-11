@@ -5,7 +5,7 @@
 @implementation ViewController
 
 - (void)viewDidLoad {
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"rain"]];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wallpaper"]];
 }
 
 #pragma mark - Folder Example
