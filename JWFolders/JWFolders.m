@@ -40,7 +40,6 @@ static id sender = nil;
            inContainerView:(UIView *)containerView 
                     sender:(id)aSender {
     sender = aSender;
-    view.layer.shouldRasterize = YES;    
     UIImage *screenshot = [containerView screenshot];
     CGFloat width = containerView.frame.size.width;
     CGFloat height = containerView.frame.size.height;
