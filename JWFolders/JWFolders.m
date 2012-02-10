@@ -24,7 +24,7 @@
 @property (nonatomic, strong) JWFolderSplitView *bottom;
 @property (nonatomic, assign) CGPoint folderPoint;
 @property (nonatomic, strong) UIView *contentView;
-@property (nonatomic, weak) id sender;
+@property (nonatomic, assign) id sender;
 @property (nonatomic, copy) JWFoldersCompletionBlock completionBlock;
 @property (nonatomic, copy) JWFoldersCloseBlock closeBlock;
 @property (nonatomic, copy) JWFoldersOpenBlock openBlock;
@@ -222,6 +222,10 @@ static JWFolders *sharedFolder = nil;
         [self.top removeFromSuperview];
         [self.bottom removeFromSuperview];
         [self.contentView removeFromSuperview];
+        self.top = nil;
+        self.bottom = nil;
+        self.contentView = nil;
+        self.sender = nil;
         
         if (self.completionBlock) self.completionBlock();
         sharedFolder = nil;
