@@ -94,6 +94,10 @@ typedef void (^JWFoldersOpenBlock)(UIView *contentView, CFTimeInterval duration,
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock;
 
+/* This attempts to close the folder that is currently displaying. */
++ (void)closeCurrentFolder;
+
+
 
 /* Removed methods - will be completely eliminated in next release */
 + (void)openFolderWithView:(UIView *)view 

@@ -142,10 +142,6 @@ static JWFolders *sharedFolder = nil;
                                    completionBlock:completionBlock];
 }
 
-
-
-
-
 - (void)openFolderWithContentView:(UIView *)contentView 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
@@ -250,6 +246,11 @@ static JWFolders *sharedFolder = nil;
     b1.position = position;
     [b1 setBackgroundColor:[UIColor colorWithPatternImage:img]];
     return b1;
+}
+
++ (void)closeCurrentFolder {
+    if (sharedFolder)
+        [[self sharedFolder] folderWillClose:nil];
 }
 
 @end
