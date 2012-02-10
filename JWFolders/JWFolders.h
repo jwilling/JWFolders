@@ -7,54 +7,108 @@
  */
 
 #import <Foundation/Foundation.h>
+@class JWFolderSplitView, CAMediaTimingFunction;
+
+typedef void (^JWFoldersCompletionBlock)(void);
+typedef void (^JWFoldersCloseBlock)(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction);
+typedef void (^JWFoldersOpenBlock)(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction);
 
 @interface JWFolders : NSObject
 
-/* 
- Description - Call this method to open the folder with the specified parameters.
+/*
+ Description:       The following are convenience methods that will create 
+                    a JWFolders object which will handle the folder animation 
+                    and removal for you.  All you are responsible for, as the 
+                    sender, is to pass in (at minimum) the content view, position, 
+                    and container view.  The rest are optional.
  
- View: The view that you wish to add in the folder area.
- Position: The point where you wish to open the folder.
- Container: The view in which you are adding the folder.
- Sender: The class to which you wish to recieve notifications. 
+ ****Required Parameters****
+ Content View:      This is the view that you wish to be embedded in between 
+                    two folder-style panels.
+ 
+ Container View:    This is the view in which you wish the folders to be added 
+                    as a subview of. Behaviour when the container view is 
+                    smaller than the content view is undefined.
+ 
+ Position:          The position is used to determine where the folders should
+                    be opened.  In later updates the x-coordinate will be used 
+                    to create a "notch", similar to the iOS Springboard. The 
+                    position should be relative to the container view.
+ 
+ ****Optional Parameters****
+ Sender:            The sender is currently not used, although in the future
+                    it could be used for delegate callbacks, which have been
+                    replaced by blocks in this version.
+ 
+ Open Block:        The open block will be run when the animation of opening
+                    the folder is about to be performed.  Use this opportunity
+                    to perform animations and other custom behaviour on the
+                    content view. Use the passed-in reference to the content view.
+ 
+ Close Block:       The close block will be run when the animation of closing
+                    the folder is about to be performed.  Use this opportunity
+                    to perform animations and other custom behaviour on the
+                    content view. Use the passed-in reference to the content veiw.
+ 
+ Completion Block:  The completion block is called when the folder has been 
+                    closed, and all views have been removed from the container
+                    view.  Use this opportunity to perform updates in your UI
+                    if needed.
+ 
  */
+
++ (void)openFolderWithContentView:(UIView *)contentView 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                        openBlock:(JWFoldersOpenBlock)openBlock
+                       closeBlock:(JWFoldersCloseBlock)closeBlock
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock;
+
++ (void)openFolderWithContentViewController:(UIViewController *)viewController
+                                   position:(CGPoint)position
+                              containerView:(UIView *)containerView
+                                     sender:(id)sender;
+
++ (void)openFolderWithContentView:(UIView *)view
+                         position:(CGPoint)position
+                    containerView:(UIView *)containerView
+                           sender:(id)sender;
+
++ (void)openFolderWithContentView:(UIView *)view 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                       closeBlock:(JWFoldersCloseBlock)closeBlock;
+
++ (void)openFolderWithContentView:(UIView *)view 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                        openBlock:(JWFoldersOpenBlock)openBlock;
+
++ (void)openFolderWithContentView:(UIView *)view 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                        openBlock:(JWFoldersOpenBlock)openBlock
+                       closeBlock:(JWFoldersCloseBlock)closeBlock;
+
+
+/* Removed methods - will be completely eliminated in next release */
 + (void)openFolderWithView:(UIView *)view 
                 atPosition:(CGPoint)position 
            inContainerView:(UIView *)containerView 
-                    sender:(id)sender;
-
-/* 
- Description - Call this method to open the folder with the specified parameters.
- 
- View Controller: The view controller that you wish to add in the folder area.
- Position: The point where you wish to open the folder.
- Container: The view in which you are adding the folder.
- Sender: The class to which you wish to recieve notifications. 
- */
+                    sender:(id)sender UNAVAILABLE_ATTRIBUTE;
 + (void)openFolderWithViewController:(UIViewController *)viewController 
                           atPosition:(CGPoint)position 
                      inContainerView:(UIView *)containerView 
-                              sender:(id)sender;
+                              sender:(id)sender UNAVAILABLE_ATTRIBUTE;
++ (void)closeFolderWithCompletionBlock:(void (^)(void))block UNAVAILABLE_ATTRIBUTE;
++ (void)folderWillClose:(id)aSender UNAVAILABLE_ATTRIBUTE;
 
-
-/* 
- Description - Call this method to close the folder with a completion block passed as the parameter.
- 
- By default, the view contained in the folder is not removed.  During the completion block, the
- added view should be removed from the superview.
- */
-+ (void)closeFolderWithCompletionBlock:(void (^)(void))block;
-
-/*
- Description - Called when the top or bottom buttons trigger the -closeFolderWithCompletionBlock method.
- 
- If the sender was passed in during one of the open folder methods, -folderWillClose will be called on the sender.
- If the sender implements this method, it is required to call the +closeFolderWithCompletionBlock manually.
- */
-+ (void)folderWillClose:(id)aSender;
 
 @end
-
 
 
 /* For light highlight on folder buttons */

@@ -14,17 +14,23 @@
     NSLog(@"Folder will open.");
     sampleFolder = [[FolderViewController alloc] initWithNibName:NSStringFromClass([FolderViewController class]) bundle:nil];
     CGPoint openPoint = CGPointMake(40.0f, 250.0f); //arbitrary point
-    [JWFolders openFolderWithViewController:sampleFolder atPosition:openPoint inContainerView:self.view sender:self];    
-}
-
-- (void)folderWillClose:(id)sender {
-    NSLog(@"Folder will close.");
-    [JWFolders closeFolderWithCompletionBlock:^{
-        if (sampleFolder)
-            [sampleFolder.view removeFromSuperview], sampleFolder = nil;
-        NSLog(@"Folder closed.");
-    }];
-    
+    [JWFolders openFolderWithContentView:sampleFolder.view
+                                position:openPoint 
+                           containerView:self.view 
+                                  sender:self 
+                               openBlock:^(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction) {
+                                   //perform custom animation here on contentView if you wish
+                                   NSLog(@"Folder view: %@ is opening with duration: %f", contentView, duration);
+                               }
+                              closeBlock:^(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction) {
+                                  //also perform custom animation here on contentView if you wish
+                                   NSLog(@"Folder view: %@ is closing with duration: %f", contentView, duration);
+                              }
+                         completionBlock:^ {
+                             //the folder is closed and gone, lets do something cool!
+                              NSLog(@"Folder view is closed.");
+                         }
+     ];
 }
 
 

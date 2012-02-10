@@ -12,34 +12,154 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface JWFolders ()
-+ (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position;
+- (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position;
+- (void)openFolderWithContentView:(UIView *)view 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                        openBlock:(JWFoldersOpenBlock)openBlock 
+                       closeBlock:(JWFoldersCloseBlock)closeBlock 
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock;
+@property (nonatomic, strong) JWFolderSplitView *top;
+@property (nonatomic, strong) JWFolderSplitView *bottom;
+@property (nonatomic, assign) CGPoint folderPoint;
+@property (nonatomic, strong) UIView *contentView;
+@property (nonatomic, weak) id sender;
+@property (nonatomic, copy) JWFoldersCompletionBlock completionBlock;
+@property (nonatomic, copy) JWFoldersCloseBlock closeBlock;
+@property (nonatomic, copy) JWFoldersOpenBlock openBlock;
 @end
+
 
 @implementation JWFolders
 
-static CGPoint folderPoint;
-static JWFolderSplitView *top = nil;
-static JWFolderSplitView *bottom = nil;
-static id sender = nil;
+@synthesize top = _top;
+@synthesize bottom = _bottom;
+@synthesize folderPoint = _folderPoint;
+@synthesize contentView = _contentView;
+@synthesize sender = _sender;
+@synthesize completionBlock = _completionBlock;
+@synthesize closeBlock = _closeBlock;
+@synthesize openBlock = _openBlock;
 
-+ (void)folderWillClose:(id)aSender {
-    if ([sender respondsToSelector:@selector(folderWillClose:)])
-        [sender folderWillClose:self];
-    else [self closeFolderWithCompletionBlock:nil];
+
+/* Singleton */
+static JWFolders *sharedFolder = nil;
+
++ (JWFolders *)sharedFolder {
+	
+	if(sharedFolder == nil)
+		sharedFolder = [[JWFolders alloc] init];
+	
+	return sharedFolder;
 }
 
-+ (void)openFolderWithViewController:(UIViewController *)viewController 
-                          atPosition:(CGPoint)position 
-                     inContainerView:(UIView *)containerView 
-                              sender:(id)aSender {
-    [self openFolderWithView:viewController.view atPosition:position inContainerView:containerView sender:aSender];
+
+/* Class methods */
++ (void)openFolderWithContentViewController:(UIViewController *)viewController
+                                   position:(CGPoint)position
+                              containerView:(UIView *)containerView
+                                     sender:(id)sender {
+    [self openFolderWithContentView:viewController.view 
+                           position:position 
+                      containerView:containerView
+                             sender:sender
+                          openBlock:nil 
+                         closeBlock:nil 
+                    completionBlock:nil];
 }
 
-+ (void)openFolderWithView:(UIView *)view 
-                atPosition:(CGPoint)position 
-           inContainerView:(UIView *)containerView 
-                    sender:(id)aSender {
-    sender = aSender;
++ (void)openFolderWithContentView:(UIView *)contentView
+                         position:(CGPoint)position
+                    containerView:(UIView *)containerView
+                           sender:(id)sender {
+    [self openFolderWithContentView:contentView 
+                           position:position 
+                      containerView:containerView
+                             sender:sender
+                          openBlock:nil 
+                         closeBlock:nil 
+                    completionBlock:nil];
+}
+
++ (void)openFolderWithContentView:(UIView *)contentView 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                       closeBlock:(JWFoldersCloseBlock)closeBlock {
+    [self openFolderWithContentView:contentView 
+                           position:position 
+                      containerView:containerView
+                             sender:sender
+                          openBlock:nil 
+                         closeBlock:closeBlock 
+                    completionBlock:nil];
+}
+
++ (void)openFolderWithContentView:(UIView *)contentView 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                        openBlock:(JWFoldersOpenBlock)openBlock {
+    [self openFolderWithContentView:contentView 
+                           position:position 
+                      containerView:containerView
+                             sender:sender
+                          openBlock:openBlock 
+                         closeBlock:nil 
+                    completionBlock:nil];
+}
+
++ (void)openFolderWithContentView:(UIView *)contentView 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                        openBlock:(JWFoldersOpenBlock)openBlock
+                       closeBlock:(JWFoldersCloseBlock)closeBlock {
+    [self openFolderWithContentView:contentView 
+                           position:position 
+                      containerView:containerView
+                             sender:sender
+                          openBlock:openBlock 
+                         closeBlock:closeBlock 
+                    completionBlock:nil];
+}
+
++ (void)openFolderWithContentView:(UIView *)contentView 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                        openBlock:(JWFoldersOpenBlock)openBlock
+                       closeBlock:(JWFoldersCloseBlock)closeBlock
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock {
+    
+    [[self sharedFolder] openFolderWithContentView:contentView 
+                                          position:position 
+                                     containerView:containerView 
+                                            sender:sender 
+                                         openBlock:openBlock 
+                                        closeBlock:closeBlock 
+                                   completionBlock:completionBlock];
+}
+
+
+
+
+
+- (void)openFolderWithContentView:(UIView *)contentView 
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                           sender:(id)sender 
+                        openBlock:(JWFoldersOpenBlock)openBlock 
+                       closeBlock:(JWFoldersCloseBlock)closeBlock 
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock {
+    
+    self.sender = sender;
+    self.contentView = contentView;
+    self.openBlock = openBlock;
+    self.closeBlock = closeBlock;
+    self.completionBlock = completionBlock;
+
     UIImage *screenshot = [containerView screenshot];
     CGFloat width = containerView.frame.size.width;
     CGFloat height = containerView.frame.size.height;
@@ -47,39 +167,69 @@ static id sender = nil;
     CGRect upperRect = CGRectMake(0, 0, width, position.y);
     CGRect lowerRect = CGRectMake(0, position.y, width, height - position.y);
     
-    top = [self buttonForRect:upperRect andScreen:screenshot top:YES position:position];
-    bottom = [self buttonForRect:lowerRect andScreen:screenshot top:NO position:position];
+    self.top = [self buttonForRect:upperRect andScreen:screenshot top:YES position:position];
+    self.bottom = [self buttonForRect:lowerRect andScreen:screenshot top:NO position:position];
     
-    [top addTarget:self action:@selector(folderWillClose:) forControlEvents:UIControlEventTouchUpInside];
-    [bottom addTarget:self action:@selector(folderWillClose:) forControlEvents:UIControlEventTouchUpInside];
+    [self.top addTarget:self action:@selector(folderWillClose:) forControlEvents:UIControlEventTouchUpInside];
+    [self.bottom addTarget:self action:@selector(folderWillClose:) forControlEvents:UIControlEventTouchUpInside];
     
-    /* Todo: Create a "notch", similar to SpringBoard's folders
-    UIImageView *notch = nil;
-    notch.center = CGPointMake(position.x, position.y + 7.0);
-     */
+    //Todo: Create a "notch", similar to SpringBoard's folders
+    //UIImageView *notch = nil;
+    //notch.center = CGPointMake(position.x, position.y + 7.0);
     
-    [containerView addSubview:view];
-    [containerView addSubview:top];
-    [containerView addSubview:bottom];
+    [containerView addSubview:self.contentView];
+    [containerView addSubview:self.top];
+    [containerView addSubview:self.bottom];
     
-    CGRect viewFrame = view.frame;
+    CGRect viewFrame = self.contentView.frame;
     CGFloat heightPosition = (height - position.y);
     viewFrame.origin.y = height - viewFrame.size.height - heightPosition;
-    view.frame = viewFrame;
+    self.contentView.frame = viewFrame;
     
-    folderPoint = top.layer.position;
-    CGPoint toPoint = CGPointMake(folderPoint.x, folderPoint.y-view.frame.size.height);    
+    CFTimeInterval duration = 0.4f;
+    CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    self.folderPoint = self.top.layer.position;
+    CGPoint toPoint = CGPointMake(self.folderPoint.x, self.folderPoint.y - self.contentView.frame.size.height);    
     CABasicAnimation *moveUp = [CABasicAnimation animationWithKeyPath:@"position"];
-    [moveUp setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    moveUp.fromValue = [NSValue valueWithCGPoint:folderPoint];
+    [moveUp setTimingFunction:timingFunction];
+    moveUp.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
     moveUp.toValue = [NSValue valueWithCGPoint:toPoint];
-    moveUp.duration = 0.4f;
+    moveUp.duration = duration;
     
-    [top.layer addAnimation:moveUp forKey:nil];
-    top.layer.position = toPoint;
+    [self.top.layer addAnimation:moveUp forKey:nil];
+    if (openBlock) openBlock(self.contentView, duration, timingFunction);
+    self.top.layer.position = toPoint;
 }
 
-+ (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position {
+- (void)folderWillClose:(id)sender {
+    CFTimeInterval duration = 0.4f;
+    CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    CABasicAnimation *moveDown = [CABasicAnimation animationWithKeyPath:@"position"];
+    [moveDown setValue:@"moveDown" forKey:@"animationType"];
+    [moveDown setDelegate:self];
+    [moveDown setTimingFunction:timingFunction];
+    moveDown.fromValue = [NSValue valueWithCGPoint:[[_top.layer presentationLayer] position]];
+    moveDown.toValue = [NSValue valueWithCGPoint:_folderPoint];
+    moveDown.duration = 0.4f;
+    [self.top.layer addAnimation:moveDown forKey:nil];
+    if (self.closeBlock) self.closeBlock(self.contentView, duration, timingFunction);
+    self.top.layer.position = self.folderPoint;
+}
+
+// Using delegate callbacks instead of blocks in this case to avoid something terrible
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
+    if ([[anim valueForKey:@"animationType"] isEqualToString:@"moveDown"]) {        
+        [self.top removeFromSuperview];
+        [self.bottom removeFromSuperview];
+        [self.contentView removeFromSuperview];
+        
+        if (self.completionBlock) self.completionBlock();
+        sharedFolder = nil;
+        
+    }
+}
+
+- (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position {
     CGFloat scale = [UIScreen screenScale]; 
     CGFloat width = aRect.size.width;
     CGFloat height = aRect.size.height;
@@ -96,26 +246,6 @@ static id sender = nil;
     b1.position = position;
     [b1 setBackgroundColor:[UIColor colorWithPatternImage:img]];
     return b1;
-}
-
-+ (void)closeFolderWithCompletionBlock:(void (^)(void))block {
-    [CATransaction setCompletionBlock:^{
-        if (block) {
-            block();
-        }
-        [top removeFromSuperview];
-        [bottom removeFromSuperview];
-        if (top) top = nil;
-        if (bottom) bottom = nil;
-        if (sender) sender = nil;
-    }];
-    CABasicAnimation *moveDown = [CABasicAnimation animationWithKeyPath:@"position"];
-    [moveDown setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    moveDown.fromValue = [NSValue valueWithCGPoint:[[top.layer presentationLayer] position]];
-    moveDown.toValue = [NSValue valueWithCGPoint:folderPoint];
-    moveDown.duration = 0.4f;
-    [top.layer addAnimation:moveDown forKey:nil];
-    top.layer.position = folderPoint;
 }
 
 @end
