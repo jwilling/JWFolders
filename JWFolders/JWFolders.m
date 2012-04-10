@@ -16,6 +16,7 @@
 - (void)openFolderWithContentView:(UIView *)view 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock 
                        closeBlock:(JWFoldersCloseBlock)closeBlock 
@@ -28,6 +29,7 @@
 @property (nonatomic, copy) JWFoldersCompletionBlock completionBlock;
 @property (nonatomic, copy) JWFoldersCloseBlock closeBlock;
 @property (nonatomic, copy) JWFoldersOpenBlock openBlock;
+@property (nonatomic, assign) JWSlideDirection slideDirection;
 @end
 
 
@@ -41,6 +43,7 @@
 @synthesize completionBlock = _completionBlock;
 @synthesize closeBlock = _closeBlock;
 @synthesize openBlock = _openBlock;
+@synthesize slideDirection = _slideDirection;
 
 
 /* Singleton */
@@ -59,10 +62,12 @@ static JWFolders *sharedFolder = nil;
 + (void)openFolderWithContentViewController:(UIViewController *)viewController
                                    position:(CGPoint)position
                               containerView:(UIView *)containerView
+                                  direction:(JWSlideDirection)direction
                                      sender:(id)sender {
     [self openFolderWithContentView:viewController.view 
                            position:position 
                       containerView:containerView
+                          direction:direction
                              sender:sender
                           openBlock:nil 
                          closeBlock:nil 
@@ -72,10 +77,12 @@ static JWFolders *sharedFolder = nil;
 + (void)openFolderWithContentView:(UIView *)contentView
                          position:(CGPoint)position
                     containerView:(UIView *)containerView
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender {
     [self openFolderWithContentView:contentView 
                            position:position 
                       containerView:containerView
+                          direction:direction
                              sender:sender
                           openBlock:nil 
                          closeBlock:nil 
@@ -85,11 +92,13 @@ static JWFolders *sharedFolder = nil;
 + (void)openFolderWithContentView:(UIView *)contentView 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                        closeBlock:(JWFoldersCloseBlock)closeBlock {
     [self openFolderWithContentView:contentView 
                            position:position 
                       containerView:containerView
+                          direction:direction
                              sender:sender
                           openBlock:nil 
                          closeBlock:closeBlock 
@@ -99,11 +108,13 @@ static JWFolders *sharedFolder = nil;
 + (void)openFolderWithContentView:(UIView *)contentView 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock {
     [self openFolderWithContentView:contentView 
                            position:position 
                       containerView:containerView
+                          direction:direction
                              sender:sender
                           openBlock:openBlock 
                          closeBlock:nil 
@@ -113,12 +124,14 @@ static JWFolders *sharedFolder = nil;
 + (void)openFolderWithContentView:(UIView *)contentView 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock {
     [self openFolderWithContentView:contentView 
                            position:position 
                       containerView:containerView
+                          direction:direction
                              sender:sender
                           openBlock:openBlock 
                          closeBlock:closeBlock 
@@ -128,6 +141,7 @@ static JWFolders *sharedFolder = nil;
 + (void)openFolderWithContentView:(UIView *)contentView 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
@@ -136,6 +150,7 @@ static JWFolders *sharedFolder = nil;
     [[self sharedFolder] openFolderWithContentView:contentView 
                                           position:position 
                                      containerView:containerView 
+                                         direction:direction
                                             sender:sender 
                                          openBlock:openBlock 
                                         closeBlock:closeBlock 
@@ -145,6 +160,7 @@ static JWFolders *sharedFolder = nil;
 - (void)openFolderWithContentView:(UIView *)contentView 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock 
                        closeBlock:(JWFoldersCloseBlock)closeBlock 
@@ -155,6 +171,7 @@ static JWFolders *sharedFolder = nil;
     self.openBlock = openBlock;
     self.closeBlock = closeBlock;
     self.completionBlock = completionBlock;
+    self.slideDirection = direction;
 
     UIImage *screenshot = [containerView screenshot];
     CGFloat width = containerView.frame.size.width;
@@ -177,24 +194,44 @@ static JWFolders *sharedFolder = nil;
     [containerView addSubview:self.top];
     [containerView addSubview:self.bottom];
     
-    CGRect viewFrame = self.contentView.frame;
-    CGFloat heightPosition = (height - position.y);
-    viewFrame.origin.y = height - viewFrame.size.height - heightPosition;
-    self.contentView.frame = viewFrame;
-    
-    CFTimeInterval duration = 0.4f;
-    CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    self.folderPoint = self.top.layer.position;
-    CGPoint toPoint = CGPointMake(self.folderPoint.x, self.folderPoint.y - self.contentView.frame.size.height);    
-    CABasicAnimation *moveUp = [CABasicAnimation animationWithKeyPath:@"position"];
-    [moveUp setTimingFunction:timingFunction];
-    moveUp.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
-    moveUp.toValue = [NSValue valueWithCGPoint:toPoint];
-    moveUp.duration = duration;
-    
-    [self.top.layer addAnimation:moveUp forKey:nil];
-    if (openBlock) openBlock(self.contentView, duration, timingFunction);
-    self.top.layer.position = toPoint;
+    if(self.slideDirection == JWSlideDirectionUp) {
+        CGRect viewFrame = self.contentView.frame;
+        CGFloat heightPosition = (height - position.y);
+        viewFrame.origin.y = height - viewFrame.size.height - heightPosition;
+        self.contentView.frame = viewFrame;
+        
+        CFTimeInterval duration = 0.4f;
+        CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        self.folderPoint = self.top.layer.position;
+        CGPoint toPoint = CGPointMake(self.folderPoint.x, self.folderPoint.y - self.contentView.frame.size.height);    
+        CABasicAnimation *moveUp = [CABasicAnimation animationWithKeyPath:@"position"];
+        [moveUp setTimingFunction:timingFunction];
+        moveUp.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
+        moveUp.toValue = [NSValue valueWithCGPoint:toPoint];
+        moveUp.duration = duration;
+        
+        [self.top.layer addAnimation:moveUp forKey:nil];
+        if (openBlock) openBlock(self.contentView, duration, timingFunction);
+        self.top.layer.position = toPoint;
+    }else {
+        CGRect viewFrame = self.contentView.frame;
+        viewFrame.origin.y = position.y;
+        self.contentView.frame = viewFrame;
+        
+        CFTimeInterval duration = 0.4f;
+        CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        self.folderPoint = self.bottom.layer.position;
+        CGPoint toPoint = CGPointMake(self.folderPoint.x, self.folderPoint.y + self.contentView.frame.size.height);    
+        CABasicAnimation *moveUp = [CABasicAnimation animationWithKeyPath:@"position"];
+        [moveUp setTimingFunction:timingFunction];
+        moveUp.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
+        moveUp.toValue = [NSValue valueWithCGPoint:toPoint];
+        moveUp.duration = duration;
+        
+        [self.bottom.layer addAnimation:moveUp forKey:nil];
+        if (openBlock) openBlock(self.contentView, duration, timingFunction);
+        self.bottom.layer.position = toPoint;
+    }
 }
 
 - (void)folderWillClose:(id)sender {
@@ -204,12 +241,22 @@ static JWFolders *sharedFolder = nil;
     [moveDown setValue:@"moveDown" forKey:@"animationType"];
     [moveDown setDelegate:self];
     [moveDown setTimingFunction:timingFunction];
-    moveDown.fromValue = [NSValue valueWithCGPoint:[[_top.layer presentationLayer] position]];
-    moveDown.toValue = [NSValue valueWithCGPoint:_folderPoint];
-    moveDown.duration = 0.4f;
-    [self.top.layer addAnimation:moveDown forKey:nil];
-    if (self.closeBlock) self.closeBlock(self.contentView, duration, timingFunction);
-    self.top.layer.position = self.folderPoint;
+    
+    if(self.slideDirection == JWSlideDirectionUp) {
+        moveDown.fromValue = [NSValue valueWithCGPoint:[[_top.layer presentationLayer] position]];
+        moveDown.toValue = [NSValue valueWithCGPoint:_folderPoint];
+        moveDown.duration = 0.4f;
+        [self.top.layer addAnimation:moveDown forKey:nil];
+        if (self.closeBlock) self.closeBlock(self.contentView, duration, timingFunction);
+        self.top.layer.position = self.folderPoint;
+    }else {
+        moveDown.fromValue = [NSValue valueWithCGPoint:[[_bottom.layer presentationLayer] position]];
+        moveDown.toValue = [NSValue valueWithCGPoint:_folderPoint];
+        moveDown.duration = 0.4f;
+        [self.bottom.layer addAnimation:moveDown forKey:nil];
+        if (self.closeBlock) self.closeBlock(self.contentView, duration, timingFunction);
+        self.bottom.layer.position = self.folderPoint;        
+    }    
 }
 
 // Using delegate callbacks instead of blocks in this case to avoid something terrible
