@@ -7,6 +7,13 @@
  */
 
 #import <Foundation/Foundation.h>
+
+typedef enum {
+    JWSlideDirectionUp,
+    JWSlideDirectionDown,
+} JWSlideDirection;
+
+
 @class JWFolderSplitView, CAMediaTimingFunction;
 
 typedef void (^JWFoldersCompletionBlock)(void);
@@ -60,6 +67,7 @@ typedef void (^JWFoldersOpenBlock)(UIView *contentView, CFTimeInterval duration,
 + (void)openFolderWithContentView:(UIView *)contentView 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
@@ -68,29 +76,34 @@ typedef void (^JWFoldersOpenBlock)(UIView *contentView, CFTimeInterval duration,
 + (void)openFolderWithContentViewController:(UIViewController *)viewController
                                    position:(CGPoint)position
                               containerView:(UIView *)containerView
+                                  direction:(JWSlideDirection)direction
                                      sender:(id)sender;
 
 + (void)openFolderWithContentView:(UIView *)view
                          position:(CGPoint)position
                     containerView:(UIView *)containerView
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender;
 
 + (void)openFolderWithContentView:(UIView *)view 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                        closeBlock:(JWFoldersCloseBlock)closeBlock;
 
 + (void)openFolderWithContentView:(UIView *)view 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
+                        direction:(JWSlideDirection)direction
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock;
 
 + (void)openFolderWithContentView:(UIView *)view 
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
-                           sender:(id)sender 
+                        direction:(JWSlideDirection)direction
+                           sender:(id)sender
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock;
 
