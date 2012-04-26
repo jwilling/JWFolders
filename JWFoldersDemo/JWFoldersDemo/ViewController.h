@@ -2,10 +2,10 @@
 #import "FolderViewController.h"
 
 @interface ViewController : UIViewController
-{
-    FolderViewController *sampleFolder;
-}
 
-- (IBAction)openFolder:(id)sender;
+@property (nonatomic, strong) FolderViewController *sampleFolder;
+
+- (IBAction)openFolderDown:(id)sender;
+- (IBAction)openFolderUp:(id)sender;
 
 @end

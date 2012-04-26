@@ -50,6 +50,7 @@
 		AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+Scale.m"; sourceTree = "<group>"; };
 		AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Screenshot.h"; sourceTree = "<group>"; };
 		AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Screenshot.m"; sourceTree = "<group>"; };
+		ABAEBA451548E7F80024A279 /* JWFoldersDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = JWFoldersDemo.entitlements; sourceTree = "<group>"; };
 		ABF7821214BCED8B0026C74B /* noise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noise.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -99,6 +100,7 @@
 		AB2CB9C114AE8CF30072F455 /* JWFoldersDemo */ = {
 			isa = PBXGroup;
 			children = (
+				ABAEBA451548E7F80024A279 /* JWFoldersDemo.entitlements */,
 				AB2CB9CA14AE8CF30072F455 /* AppDelegate.h */,
 				AB2CB9CB14AE8CF30072F455 /* AppDelegate.m */,
 				AB2CB9CD14AE8CF30072F455 /* ViewController.h */,
@@ -166,7 +168,7 @@
 		AB2CB9AE14AE8CF30072F455 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0440;
 			};
 			buildConfigurationList = AB2CB9B114AE8CF30072F455 /* Build configuration list for PBXProject "JWFoldersDemo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -287,6 +289,7 @@
 		AB2CB9D614AE8CF30072F455 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = JWFoldersDemo/JWFoldersDemo.entitlements;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JWFoldersDemo/JWFoldersDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
@@ -299,6 +302,7 @@
 		AB2CB9D714AE8CF30072F455 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = JWFoldersDemo/JWFoldersDemo.entitlements;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JWFoldersDemo/JWFoldersDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;

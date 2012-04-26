@@ -177,8 +177,8 @@ static JWFolders *sharedInstance = nil;
     self.top = [self buttonForRect:upperRect andScreen:screenshot top:YES position:position];
     self.bottom = [self buttonForRect:lowerRect andScreen:screenshot top:NO position:position];
     
-    [self.top addTarget:self action:@selector(folderWillClose:) forControlEvents:UIControlEventTouchUpInside];
-    [self.bottom addTarget:self action:@selector(folderWillClose:) forControlEvents:UIControlEventTouchUpInside];
+    [self.top addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
+    [self.bottom addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     
     //Todo: Create a "notch", similar to SpringBoard's folders
     //UIImageView *notch = nil;
@@ -188,44 +188,48 @@ static JWFolders *sharedInstance = nil;
     [containerView addSubview:self.top];
     [containerView addSubview:self.bottom];
     
+    BOOL up = (direction == JWFoldersOpenDirectionUp);
     CGRect viewFrame = self.contentView.frame;
     CGFloat heightPosition = (height - position.y);
-    viewFrame.origin.y = height - viewFrame.size.height - heightPosition;
+    viewFrame.origin.y = (up) ? (height - viewFrame.size.height - heightPosition) : (position.y);
     self.contentView.frame = viewFrame;
     
+    CGPoint toPoint;
     CFTimeInterval duration = 0.4f;
-    CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    self.folderPoint = self.top.layer.position;
-    CGPoint toPoint = CGPointMake(self.folderPoint.x, self.folderPoint.y - self.contentView.frame.size.height);    
+    CGFloat contentHeight = self.contentView.frame.size.height;
     CABasicAnimation *move = [CABasicAnimation animationWithKeyPath:@"position"];
-    [move setTimingFunction:timingFunction];
+    CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    move.duration = duration;
+    move.timingFunction = timingFunction;
+    
+    self.folderPoint = (up) ? self.top.layer.position : self.bottom.layer.position;
+    toPoint = (CGPoint){ self.folderPoint.x, (up) ? (self.folderPoint.y - contentHeight) : (self.folderPoint.y + contentHeight)};
     move.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
     move.toValue = [NSValue valueWithCGPoint:toPoint];
-    move.duration = duration;
-    
-    [self.top.layer addAnimation:move forKey:nil];
+    [up ? self.top.layer : self.bottom.layer addAnimation:move forKey:nil];
+
     if (openBlock) openBlock(self.contentView, duration, timingFunction);
-    self.top.layer.position = toPoint;
+    [(up) ? self.top.layer : self.bottom.layer setPosition:toPoint];
 }
 
-- (void)folderWillClose:(id)sender {
+- (void)performClose:(id)sender {
     CFTimeInterval duration = 0.4f;
+    BOOL up = (self.direction == JWFoldersOpenDirectionUp);
     CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    CABasicAnimation *moveDown = [CABasicAnimation animationWithKeyPath:@"position"];
-    [moveDown setValue:@"moveDown" forKey:@"animationType"];
-    [moveDown setDelegate:self];
-    [moveDown setTimingFunction:timingFunction];
-    moveDown.fromValue = [NSValue valueWithCGPoint:[[_top.layer presentationLayer] position]];
-    moveDown.toValue = [NSValue valueWithCGPoint:_folderPoint];
-    moveDown.duration = 0.4f;
-    [self.top.layer addAnimation:moveDown forKey:nil];
+    CABasicAnimation *move = [CABasicAnimation animationWithKeyPath:@"position"];
+    [move setValue:@"close" forKey:@"animationType"];
+    [move setDelegate:self];
+    [move setTimingFunction:timingFunction];
+    move.fromValue = [NSValue valueWithCGPoint:[[(up) ? self.top.layer : self.bottom.layer presentationLayer] position]];
+    move.toValue = [NSValue valueWithCGPoint:_folderPoint];
+    move.duration = duration;
+    [up ? self.top.layer : self.bottom.layer addAnimation:move forKey:nil];
     if (self.closeBlock) self.closeBlock(self.contentView, duration, timingFunction);
-    self.top.layer.position = self.folderPoint;
+    [(up) ? self.top.layer : self.bottom.layer setPosition:self.folderPoint];
 }
 
-// Using delegate callbacks instead of blocks in this case to avoid something terrible
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    if ([[anim valueForKey:@"animationType"] isEqualToString:@"moveDown"]) {        
+    if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {        
         [self.top removeFromSuperview];
         [self.bottom removeFromSuperview];
         [self.contentView removeFromSuperview];
@@ -235,8 +239,6 @@ static JWFolders *sharedInstance = nil;
         self.sender = nil;
         
         if (self.completionBlock) self.completionBlock();
-        sharedInstance = nil;
-        
     }
 }
 
@@ -261,7 +263,7 @@ static JWFolders *sharedInstance = nil;
 
 + (void)closeCurrentFolder {
     if (sharedInstance)
-        [[self sharedInstance] folderWillClose:nil];
+        [[self sharedInstance] performClose:nil];
 }
 
 @end

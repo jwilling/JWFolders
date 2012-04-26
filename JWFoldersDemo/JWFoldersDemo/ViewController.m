@@ -3,18 +3,19 @@
 #import "JWFolders.h"
 
 @implementation ViewController
+@synthesize sampleFolder = _sampleFolder;
 
 - (void)viewDidLoad {
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wallpaper"]];
+    self.sampleFolder = [[FolderViewController alloc] initWithNibName:NSStringFromClass([FolderViewController class]) bundle:nil];
 }
 
 #pragma mark - Folder Example
 
-- (IBAction)openFolder:(id)sender {
-    NSLog(@"Folder will open.");
-    sampleFolder = [[FolderViewController alloc] initWithNibName:NSStringFromClass([FolderViewController class]) bundle:nil];
-    CGPoint openPoint = CGPointMake(40.0f, 250.0f); //arbitrary point
-    [JWFolders openFolderWithContentView:sampleFolder.view
+- (IBAction)openFolderUp:(id)sender {
+    NSLog(@"Folder will open up.");
+    CGPoint openPoint = CGPointMake(0, CGRectGetHeight(self.view.frame) / 2); //arbitrary point
+    [JWFolders openFolderWithContentView:self.sampleFolder.view
                                 position:openPoint 
                            containerView:self.view 
                                   sender:self 
@@ -24,12 +25,34 @@
                                }
                               closeBlock:^(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction) {
                                   //also perform custom animation here on contentView if you wish
-                                   NSLog(@"Folder view: %@ is closing with duration: %f", contentView, duration);
+                                  NSLog(@"Folder view: %@ is closing with duration: %f", contentView, duration);
                               }
                          completionBlock:^ {
                              //the folder is closed and gone, lets do something cool!
-                              NSLog(@"Folder view is closed.");
+                             NSLog(@"Folder view is closed.");
                          }
+                               direction:JWFoldersOpenDirectionUp
+     ];
+}
+
+- (IBAction)openFolderDown:(id)sender {
+    NSLog(@"Folder will open down.");
+    CGPoint openPoint = CGPointMake(0, CGRectGetHeight(self.view.frame) / 2); //arbitrary point
+    [JWFolders openFolderWithContentView:self.sampleFolder.view
+                                position:openPoint 
+                           containerView:self.view 
+                                  sender:self 
+                               openBlock:^(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction) {
+                               }
+                              closeBlock:^(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction) {
+                                  //also perform custom animation here on contentView if you wish
+                                  NSLog(@"Folder view: %@ is closing with duration: %f", contentView, duration);
+                              }
+                         completionBlock:^ {
+                             //the folder is closed and gone, lets do something cool!
+                             NSLog(@"Folder view is closed.");
+                         }
+                               direction:JWFoldersOpenDirectionDown
      ];
 }
 
