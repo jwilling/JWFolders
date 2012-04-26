@@ -113,10 +113,3 @@ typedef void (^JWFoldersOpenBlock)(UIView *contentView, CFTimeInterval duration,
 
 
 @end
-
-
-/* For light highlight on folder buttons */
-@interface JWFolderSplitView : UIControl
-@property(nonatomic)BOOL isTop;
-@property(nonatomic)CGPoint position;
-@end

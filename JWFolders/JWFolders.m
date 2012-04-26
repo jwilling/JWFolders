@@ -11,6 +11,12 @@
 #import "UIScreen+Scale.h"
 #import <QuartzCore/QuartzCore.h>
 
+/* For light highlight on folder buttons */
+@interface JWFolderSplitView : UIControl
+@property (nonatomic) BOOL isTop;
+@property (nonatomic) CGPoint position;
+@end
+
 @interface JWFolders ()
 - (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position;
 - (void)openFolderWithContentView:(UIView *)view 
