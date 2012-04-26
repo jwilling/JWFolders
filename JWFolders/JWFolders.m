@@ -49,19 +49,13 @@
 @synthesize openBlock = _openBlock;
 
 
-/* Singleton */
-static JWFolders *sharedFolder = nil;
-
-+ (JWFolders *)sharedFolder {
-	
-	if(sharedFolder == nil)
-		sharedFolder = [[JWFolders alloc] init];
-	
-	return sharedFolder;
+static JWFolders *sharedInstance = nil;
++ (JWFolders *)sharedInstance {
+	static dispatch_once_t pred;
+	dispatch_once(&pred, ^{ sharedInstance = [[self alloc] init]; });
+	return sharedInstance;
 }
 
-
-/* Class methods */
 + (void)openFolderWithContentViewController:(UIViewController *)viewController
                                    position:(CGPoint)position
                               containerView:(UIView *)containerView
@@ -139,7 +133,7 @@ static JWFolders *sharedFolder = nil;
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock {
     
-    [[self sharedFolder] openFolderWithContentView:contentView 
+    [[self sharedInstance] openFolderWithContentView:contentView
                                           position:position 
                                      containerView:containerView 
                                             sender:sender 
@@ -230,7 +224,7 @@ static JWFolders *sharedFolder = nil;
         self.sender = nil;
         
         if (self.completionBlock) self.completionBlock();
-        sharedFolder = nil;
+        sharedInstance = nil;
         
     }
 }
@@ -255,8 +249,8 @@ static JWFolders *sharedFolder = nil;
 }
 
 + (void)closeCurrentFolder {
-    if (sharedFolder)
-        [[self sharedFolder] folderWillClose:nil];
+    if (sharedInstance)
+        [[self sharedInstance] folderWillClose:nil];
 }
 
 @end
