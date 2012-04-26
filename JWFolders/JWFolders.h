@@ -51,6 +51,7 @@ typedef NSInteger JWFoldersOpenDirection;
  * Default is to slide upwards. */
 @property (nonatomic, readwrite) JWFoldersOpenDirection direction;
 
+
 /* The following blocks are called at specific
  * times during the lifetime of the folder.
  * 
@@ -68,11 +69,14 @@ typedef NSInteger JWFoldersOpenDirection;
 /* Convenience method for singleton instance. */
 + (id)folder;
 
-/* Opens the folder.  Be sure required properties are set */
+
+/* Opens the folder.  Be sure the required properties are set! */
 - (void)open;
+
 
 /* Closes the currently open folder. */
 + (void)closeCurrentFolder;
+
 
 /* Convenience method to open a folder without
  * the hassle of setting properties. */
