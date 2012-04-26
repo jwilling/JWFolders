@@ -7,16 +7,24 @@
  */
 
 #import <Foundation/Foundation.h>
-@class JWFolderSplitView, CAMediaTimingFunction;
+
+@class CAMediaTimingFunction;
 
 typedef void (^JWFoldersCompletionBlock)(void);
 typedef void (^JWFoldersCloseBlock)(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction);
 typedef void (^JWFoldersOpenBlock)(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction);
 
+enum JWFoldersOpenDirection {
+    JWFoldersOpenDirectionUp = 1,
+    JWFoldersOpenDirectionDown
+};
+typedef NSInteger JWFoldersOpenDirection;
+
+
 @interface JWFolders : NSObject
 
 /*
- Description:       The following are convenience methods that will create 
+ Description:       The following are convenience methods that will create
                     a JWFolders object which will handle the folder animation 
                     and removal for you.  All you are responsible for, as the 
                     sender, is to pass in (at minimum) the content view, position, 
@@ -63,7 +71,8 @@ typedef void (^JWFoldersOpenBlock)(UIView *contentView, CFTimeInterval duration,
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
-                  completionBlock:(JWFoldersCompletionBlock)completionBlock;
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock
+                        direction:(JWFoldersOpenDirection)direction;
 
 + (void)openFolderWithContentViewController:(UIViewController *)viewController
                                    position:(CGPoint)position

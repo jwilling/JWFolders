@@ -25,7 +25,9 @@
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock 
                        closeBlock:(JWFoldersCloseBlock)closeBlock 
-                  completionBlock:(JWFoldersCompletionBlock)completionBlock;
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock
+                        direction:(JWFoldersOpenDirection)direction;
+@property (nonatomic, readwrite) JWFoldersOpenDirection direction;
 @property (nonatomic, strong) JWFolderSplitView *top;
 @property (nonatomic, strong) JWFolderSplitView *bottom;
 @property (nonatomic, assign) CGPoint folderPoint;
@@ -66,7 +68,8 @@ static JWFolders *sharedInstance = nil;
                              sender:sender
                           openBlock:nil 
                          closeBlock:nil 
-                    completionBlock:nil];
+                    completionBlock:nil
+                          direction:JWFoldersOpenDirectionUp];
 }
 
 + (void)openFolderWithContentView:(UIView *)contentView
@@ -79,7 +82,8 @@ static JWFolders *sharedInstance = nil;
                              sender:sender
                           openBlock:nil 
                          closeBlock:nil 
-                    completionBlock:nil];
+                    completionBlock:nil
+                          direction:JWFoldersOpenDirectionUp];
 }
 
 + (void)openFolderWithContentView:(UIView *)contentView 
@@ -93,7 +97,8 @@ static JWFolders *sharedInstance = nil;
                              sender:sender
                           openBlock:nil 
                          closeBlock:closeBlock 
-                    completionBlock:nil];
+                    completionBlock:nil
+                          direction:JWFoldersOpenDirectionUp];
 }
 
 + (void)openFolderWithContentView:(UIView *)contentView 
@@ -107,7 +112,8 @@ static JWFolders *sharedInstance = nil;
                              sender:sender
                           openBlock:openBlock 
                          closeBlock:nil 
-                    completionBlock:nil];
+                    completionBlock:nil
+                          direction:JWFoldersOpenDirectionUp];
 }
 
 + (void)openFolderWithContentView:(UIView *)contentView 
@@ -122,7 +128,8 @@ static JWFolders *sharedInstance = nil;
                              sender:sender
                           openBlock:openBlock 
                          closeBlock:closeBlock 
-                    completionBlock:nil];
+                    completionBlock:nil
+                          direction:JWFoldersOpenDirectionUp];
 }
 
 + (void)openFolderWithContentView:(UIView *)contentView 
@@ -131,7 +138,8 @@ static JWFolders *sharedInstance = nil;
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
-                  completionBlock:(JWFoldersCompletionBlock)completionBlock {
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock
+                        direction:(JWFoldersOpenDirection)direction {
     
     [[self sharedInstance] openFolderWithContentView:contentView
                                           position:position 
@@ -139,22 +147,25 @@ static JWFolders *sharedInstance = nil;
                                             sender:sender 
                                          openBlock:openBlock 
                                         closeBlock:closeBlock 
-                                   completionBlock:completionBlock];
+                                     completionBlock:completionBlock
+                                           direction:direction];
 }
 
-- (void)openFolderWithContentView:(UIView *)contentView 
+- (void)openFolderWithContentView:(UIView *)contentView
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
                            sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock 
                        closeBlock:(JWFoldersCloseBlock)closeBlock 
-                  completionBlock:(JWFoldersCompletionBlock)completionBlock {
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock
+                        direction:(JWFoldersOpenDirection)direction {
     
     self.sender = sender;
     self.contentView = contentView;
     self.openBlock = openBlock;
     self.closeBlock = closeBlock;
     self.completionBlock = completionBlock;
+    self.direction = direction;
 
     UIImage *screenshot = [containerView screenshot];
     CGFloat width = containerView.frame.size.width;
@@ -186,13 +197,13 @@ static JWFolders *sharedInstance = nil;
     CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     self.folderPoint = self.top.layer.position;
     CGPoint toPoint = CGPointMake(self.folderPoint.x, self.folderPoint.y - self.contentView.frame.size.height);    
-    CABasicAnimation *moveUp = [CABasicAnimation animationWithKeyPath:@"position"];
-    [moveUp setTimingFunction:timingFunction];
-    moveUp.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
-    moveUp.toValue = [NSValue valueWithCGPoint:toPoint];
-    moveUp.duration = duration;
+    CABasicAnimation *move = [CABasicAnimation animationWithKeyPath:@"position"];
+    [move setTimingFunction:timingFunction];
+    move.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
+    move.toValue = [NSValue valueWithCGPoint:toPoint];
+    move.duration = duration;
     
-    [self.top.layer addAnimation:moveUp forKey:nil];
+    [self.top.layer addAnimation:move forKey:nil];
     if (openBlock) openBlock(self.contentView, duration, timingFunction);
     self.top.layer.position = toPoint;
 }
