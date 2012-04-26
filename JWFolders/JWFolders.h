@@ -23,102 +23,65 @@ typedef NSInteger JWFoldersOpenDirection;
 
 @interface JWFolders : NSObject
 
-/*
- Description:       The following are convenience methods that will create
-                    a JWFolders object which will handle the folder animation 
-                    and removal for you.  All you are responsible for, as the 
-                    sender, is to pass in (at minimum) the content view, position, 
-                    and container view.  The rest are optional.
- 
- ****Required Parameters****
- Content View:      This is the view that you wish to be embedded in between 
-                    two folder-style panels.
- 
- Container View:    This is the view in which you wish the folders to be added 
-                    as a subview of. Behaviour when the container view is 
-                    smaller than the content view is undefined.
- 
- Position:          The position is used to determine where the folders should
-                    be opened.  In later updates the x-coordinate will be used 
-                    to create a "notch", similar to the iOS Springboard. The 
-                    position should be relative to the container view.
- 
- ****Optional Parameters****
- Sender:            The sender is currently not used, although in the future
-                    it could be used for delegate callbacks, which have been
-                    replaced by blocks in this version.
- 
- Open Block:        The open block will be run when the animation of opening
-                    the folder is about to be performed.  Use this opportunity
-                    to perform animations and other custom behaviour on the
-                    content view. Use the passed-in reference to the content view.
- 
- Close Block:       The close block will be run when the animation of closing
-                    the folder is about to be performed.  Use this opportunity
-                    to perform animations and other custom behaviour on the
-                    content view. Use the passed-in reference to the content veiw.
- 
- Completion Block:  The completion block is called when the folder has been 
-                    closed, and all views have been removed from the container
-                    view.  Use this opportunity to perform updates in your UI
-                    if needed.
- 
- */
+/* The view to be embedded between 
+ * two folder-style panels. 
+ *
+ * REQUIRED */
+@property (nonatomic, strong) UIView *contentView;
 
-+ (void)openFolderWithContentView:(UIView *)contentView 
+
+/* This is the view in which you wish the folders to be 
+ * added as a subview of. Behaviour when the container 
+ * view is smaller than the content view is undefined. 
+ *
+ * REQUIRED */
+@property (nonatomic, strong) UIView *containerView;
+
+
+/* The position is used to determine where the folders should
+ * be opened.  In later updates the x-coordinate will be used
+ * to create a "notch", similar to the iOS Springboard. The
+ * position should be relative to the container view. 
+ *
+ * REQUIRED*/
+@property (nonatomic, readwrite) CGPoint position;
+
+
+/* Set the direction for the slide.
+ * Default is to slide upwards. */
+@property (nonatomic, readwrite) JWFoldersOpenDirection direction;
+
+/* The following blocks are called at specific
+ * times during the lifetime of the folder.
+ * 
+ * The open & close blocks are called immediately before
+ * the folder is about to open or close, respectively.
+ *
+ * The completion block is called when all views
+ * have been removed, and the folder is completely closed.
+ */
+@property (nonatomic, copy) JWFoldersOpenBlock openBlock;
+@property (nonatomic, copy) JWFoldersCloseBlock closeBlock;
+@property (nonatomic, copy) JWFoldersCompletionBlock completionBlock;
+
+
+/* Convenience method for singleton instance. */
++ (id)folder;
+
+/* Opens the folder.  Be sure required properties are set */
+- (void)open;
+
+/* Closes the currently open folder. */
++ (void)closeCurrentFolder;
+
+/* Convenience method to open a folder without
+ * the hassle of setting properties. */
++ (void)openFolderWithContentView:(UIView *)contentView
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
-                           sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction;
-
-+ (void)openFolderWithContentViewController:(UIViewController *)viewController
-                                   position:(CGPoint)position
-                              containerView:(UIView *)containerView
-                                     sender:(id)sender;
-
-+ (void)openFolderWithContentView:(UIView *)view
-                         position:(CGPoint)position
-                    containerView:(UIView *)containerView
-                           sender:(id)sender;
-
-+ (void)openFolderWithContentView:(UIView *)view 
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                           sender:(id)sender 
-                       closeBlock:(JWFoldersCloseBlock)closeBlock;
-
-+ (void)openFolderWithContentView:(UIView *)view 
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                           sender:(id)sender 
-                        openBlock:(JWFoldersOpenBlock)openBlock;
-
-+ (void)openFolderWithContentView:(UIView *)view 
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                           sender:(id)sender 
-                        openBlock:(JWFoldersOpenBlock)openBlock
-                       closeBlock:(JWFoldersCloseBlock)closeBlock;
-
-/* This attempts to close the folder that is currently displaying. */
-+ (void)closeCurrentFolder;
-
-
-
-/* Removed methods - will be completely eliminated in next release */
-+ (void)openFolderWithView:(UIView *)view 
-                atPosition:(CGPoint)position 
-           inContainerView:(UIView *)containerView 
-                    sender:(id)sender UNAVAILABLE_ATTRIBUTE;
-+ (void)openFolderWithViewController:(UIViewController *)viewController 
-                          atPosition:(CGPoint)position 
-                     inContainerView:(UIView *)containerView 
-                              sender:(id)sender UNAVAILABLE_ATTRIBUTE;
-+ (void)closeFolderWithCompletionBlock:(void (^)(void))block UNAVAILABLE_ATTRIBUTE;
-+ (void)folderWillClose:(id)aSender UNAVAILABLE_ATTRIBUTE;
-
 
 @end

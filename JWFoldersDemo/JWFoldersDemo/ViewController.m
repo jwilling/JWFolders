@@ -18,7 +18,6 @@
     [JWFolders openFolderWithContentView:self.sampleFolder.view
                                 position:openPoint 
                            containerView:self.view 
-                                  sender:self 
                                openBlock:^(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction) {
                                    //perform custom animation here on contentView if you wish
                                    NSLog(@"Folder view: %@ is opening with duration: %f", contentView, duration);
@@ -38,23 +37,15 @@
 - (IBAction)openFolderDown:(id)sender {
     NSLog(@"Folder will open down.");
     CGPoint openPoint = CGPointMake(0, CGRectGetHeight(self.view.frame) / 2); //arbitrary point
-    [JWFolders openFolderWithContentView:self.sampleFolder.view
-                                position:openPoint 
-                           containerView:self.view 
-                                  sender:self 
-                               openBlock:^(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction) {
-                               }
-                              closeBlock:^(UIView *contentView, CFTimeInterval duration, CAMediaTimingFunction *timingFunction) {
-                                  //also perform custom animation here on contentView if you wish
-                                  NSLog(@"Folder view: %@ is closing with duration: %f", contentView, duration);
-                              }
-                         completionBlock:^ {
-                             //the folder is closed and gone, lets do something cool!
-                             NSLog(@"Folder view is closed.");
-                         }
-                               direction:JWFoldersOpenDirectionDown
-     ];
+    
+    //you can also open the folder this way
+    //it could be potentially easier if you don't need the blocks
+    JWFolders *folder = [JWFolders folder];
+    folder.contentView = self.sampleFolder.view;
+    folder.containerView = self.view;
+    folder.position = openPoint;
+    folder.direction = JWFoldersOpenDirectionDown;
+    [folder open];
 }
-
 
 @end

@@ -11,7 +11,6 @@
 #import "UIScreen+Scale.h"
 #import <QuartzCore/QuartzCore.h>
 
-/* For light highlight on folder buttons */
 @interface JWFolderSplitView : UIControl
 @property (nonatomic) BOOL isTop;
 @property (nonatomic) CGPoint position;
@@ -19,23 +18,9 @@
 
 @interface JWFolders ()
 - (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position;
-- (void)openFolderWithContentView:(UIView *)view 
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                           sender:(id)sender 
-                        openBlock:(JWFoldersOpenBlock)openBlock 
-                       closeBlock:(JWFoldersCloseBlock)closeBlock 
-                  completionBlock:(JWFoldersCompletionBlock)completionBlock
-                        direction:(JWFoldersOpenDirection)direction;
-@property (nonatomic, readwrite) JWFoldersOpenDirection direction;
 @property (nonatomic, strong) JWFolderSplitView *top;
 @property (nonatomic, strong) JWFolderSplitView *bottom;
 @property (nonatomic, assign) CGPoint folderPoint;
-@property (nonatomic, strong) UIView *contentView;
-@property (nonatomic, assign) id sender;
-@property (nonatomic, copy) JWFoldersCompletionBlock completionBlock;
-@property (nonatomic, copy) JWFoldersCloseBlock closeBlock;
-@property (nonatomic, copy) JWFoldersOpenBlock openBlock;
 @end
 
 
@@ -43,10 +28,11 @@
 
 @synthesize top = _top;
 @synthesize bottom = _bottom;
+@synthesize position = _position;
 @synthesize folderPoint = _folderPoint;
 @synthesize contentView = _contentView;
-@synthesize sender = _sender;
 @synthesize completionBlock = _completionBlock;
+@synthesize containerView = _containerView;
 @synthesize closeBlock = _closeBlock;
 @synthesize openBlock = _openBlock;
 
@@ -58,95 +44,32 @@ static JWFolders *sharedInstance = nil;
 	return sharedInstance;
 }
 
-+ (void)openFolderWithContentViewController:(UIViewController *)viewController
-                                   position:(CGPoint)position
-                              containerView:(UIView *)containerView
-                                     sender:(id)sender {
-    [self openFolderWithContentView:viewController.view 
-                           position:position 
-                      containerView:containerView
-                             sender:sender
-                          openBlock:nil 
-                         closeBlock:nil 
-                    completionBlock:nil
-                          direction:JWFoldersOpenDirectionUp];
++ (id)folder {
+    return [self sharedInstance];
+}
+
+- (void)open {
+    [self openFolderWithContentView:self.contentView
+                           position:self.position
+                      containerView:self.containerView
+                          openBlock:self.openBlock
+                         closeBlock:self.closeBlock
+                    completionBlock:self.completionBlock
+                          direction:self.direction];
 }
 
 + (void)openFolderWithContentView:(UIView *)contentView
                          position:(CGPoint)position
                     containerView:(UIView *)containerView
-                           sender:(id)sender {
-    [self openFolderWithContentView:contentView 
-                           position:position 
-                      containerView:containerView
-                             sender:sender
-                          openBlock:nil 
-                         closeBlock:nil 
-                    completionBlock:nil
-                          direction:JWFoldersOpenDirectionUp];
-}
-
-+ (void)openFolderWithContentView:(UIView *)contentView 
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                           sender:(id)sender 
-                       closeBlock:(JWFoldersCloseBlock)closeBlock {
-    [self openFolderWithContentView:contentView 
-                           position:position 
-                      containerView:containerView
-                             sender:sender
-                          openBlock:nil 
-                         closeBlock:closeBlock 
-                    completionBlock:nil
-                          direction:JWFoldersOpenDirectionUp];
-}
-
-+ (void)openFolderWithContentView:(UIView *)contentView 
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                           sender:(id)sender 
-                        openBlock:(JWFoldersOpenBlock)openBlock {
-    [self openFolderWithContentView:contentView 
-                           position:position 
-                      containerView:containerView
-                             sender:sender
-                          openBlock:openBlock 
-                         closeBlock:nil 
-                    completionBlock:nil
-                          direction:JWFoldersOpenDirectionUp];
-}
-
-+ (void)openFolderWithContentView:(UIView *)contentView 
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                           sender:(id)sender 
-                        openBlock:(JWFoldersOpenBlock)openBlock
-                       closeBlock:(JWFoldersCloseBlock)closeBlock {
-    [self openFolderWithContentView:contentView 
-                           position:position 
-                      containerView:containerView
-                             sender:sender
-                          openBlock:openBlock 
-                         closeBlock:closeBlock 
-                    completionBlock:nil
-                          direction:JWFoldersOpenDirectionUp];
-}
-
-+ (void)openFolderWithContentView:(UIView *)contentView 
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                           sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction {
-    
     [[self sharedInstance] openFolderWithContentView:contentView
-                                          position:position 
-                                     containerView:containerView 
-                                            sender:sender 
-                                         openBlock:openBlock 
-                                        closeBlock:closeBlock 
+                                            position:position
+                                       containerView:containerView
+                                           openBlock:openBlock
+                                          closeBlock:closeBlock
                                      completionBlock:completionBlock
                                            direction:direction];
 }
@@ -154,18 +77,17 @@ static JWFolders *sharedInstance = nil;
 - (void)openFolderWithContentView:(UIView *)contentView
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
-                           sender:(id)sender 
                         openBlock:(JWFoldersOpenBlock)openBlock 
-                       closeBlock:(JWFoldersCloseBlock)closeBlock 
+                       closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction {
+    NSAssert(contentView && containerView, @"Content or container views must not be nil.");
     
-    self.sender = sender;
     self.contentView = contentView;
     self.openBlock = openBlock;
     self.closeBlock = closeBlock;
     self.completionBlock = completionBlock;
-    self.direction = direction;
+    self.direction = (direction)?:JWFoldersOpenDirectionUp;
 
     UIImage *screenshot = [containerView screenshot];
     CGFloat width = containerView.frame.size.width;
@@ -236,7 +158,6 @@ static JWFolders *sharedInstance = nil;
         self.top = nil;
         self.bottom = nil;
         self.contentView = nil;
-        self.sender = nil;
         
         if (self.completionBlock) self.completionBlock();
     }
