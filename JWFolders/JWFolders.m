@@ -39,8 +39,8 @@
 
 static JWFolders *sharedInstance = nil;
 + (JWFolders *)sharedInstance {
-	static dispatch_once_t pred;
-	dispatch_once(&pred, ^{ sharedInstance = [[self alloc] init]; });
+	if (!sharedInstance)
+        sharedInstance = [[self alloc] init];
 	return sharedInstance;
 }
 
@@ -160,6 +160,7 @@ static JWFolders *sharedInstance = nil;
         self.contentView = nil;
         
         if (self.completionBlock) self.completionBlock();
+        sharedInstance = nil;
     }
 }
 
