@@ -170,16 +170,15 @@ static JWFolders *sharedInstance = nil;
     CGFloat height = aRect.size.height;
     CGPoint origin = aRect.origin;
     
-    CGRect r1 = CGRectMake(origin.x*scale, origin.y*scale, width*scale, height*scale);
-    CGRect u1 = CGRectMake(origin.x, origin.y, width, height);
-    CGImageRef ref1 = CGImageCreateWithImageInRect([screen CGImage], r1);
-    UIImage *img = [UIImage imageWithCGImage:ref1 scale: scale orientation: UIImageOrientationUp];
-    CGImageRelease(ref1);
+    CGRect scaledRect = CGRectMake(origin.x*scale, origin.y*scale, width*scale, height*scale);
+    CGImageRef ref1 = CGImageCreateWithImageInRect([screen CGImage], scaledRect);
     
-    JWFolderSplitView *b1 = [[JWFolderSplitView alloc] initWithFrame:u1];
+    JWFolderSplitView *b1 = [[JWFolderSplitView alloc] initWithFrame:aRect];
     b1.isTop = isTop;
     b1.position = position;
-    [b1 setBackgroundColor:[UIColor colorWithPatternImage:img]];
+    b1.layer.contents = (__bridge id)(ref1);
+    CGImageRelease(ref1);
+    
     return b1;
 }
 
