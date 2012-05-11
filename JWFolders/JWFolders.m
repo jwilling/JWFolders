@@ -29,6 +29,7 @@
 @synthesize top = _top;
 @synthesize bottom = _bottom;
 @synthesize position = _position;
+@synthesize direction = _direction;
 @synthesize folderPoint = _folderPoint;
 @synthesize contentView = _contentView;
 @synthesize completionBlock = _completionBlock;
