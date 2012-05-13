@@ -16,7 +16,7 @@ typedef void (^JWFoldersOpenBlock)(UIView *contentView, CFTimeInterval duration,
 
 enum JWFoldersOpenDirection {
     JWFoldersOpenDirectionUp = 1,
-    JWFoldersOpenDirectionDown
+    JWFoldersOpenDirectionDown = 2
 };
 typedef NSInteger JWFoldersOpenDirection;
 

@@ -88,7 +88,7 @@ static JWFolders *sharedInstance = nil;
     self.openBlock = openBlock;
     self.closeBlock = closeBlock;
     self.completionBlock = completionBlock;
-    self.direction = (direction)?:JWFoldersOpenDirectionUp;
+    self.direction = (direction > 0)?direction:JWFoldersOpenDirectionUp;
 
     UIImage *screenshot = [containerView screenshot];
     CGFloat width = containerView.frame.size.width;
