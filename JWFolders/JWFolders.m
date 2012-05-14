@@ -175,15 +175,14 @@ static JWFolders *sharedInstance = nil;
     CGRect scaledRect = CGRectMake(origin.x*scale, origin.y*scale, width*scale, height*scale);
     CGImageRef ref1 = CGImageCreateWithImageInRect([screen CGImage], scaledRect);
     
-    JWFolderSplitView *b1 = [[JWFolderSplitView alloc] initWithFrame:aRect];
-    [b1 setIsTopView:isTop];
-    b1.position = position;
-    b1.layer.delegate = b1;
-    b1.layer.contents = (__bridge id)(ref1);
-    b1.layer.contentsGravity = kCAGravityCenter;
+    JWFolderSplitView *button = [[JWFolderSplitView alloc] initWithFrame:aRect];
+    [button setIsTopView:isTop];
+    button.position = position;
+    button.layer.contents = (__bridge id)(ref1);
+    button.layer.contentsGravity = kCAGravityCenter;
     CGImageRelease(ref1);
     
-    return b1;
+    return button;
 }
 
 + (void)closeCurrentFolder {
@@ -200,7 +199,7 @@ static JWFolders *sharedInstance = nil;
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
-    self.layer.delegate = self;
+    if (!self) return nil;
     
     [self createHighlightWithFrame:frame];
     
