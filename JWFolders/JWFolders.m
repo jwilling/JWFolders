@@ -12,8 +12,9 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface JWFolderSplitView : UIControl
-@property (nonatomic) BOOL isTop;
 @property (nonatomic) CGPoint position;
+@property (nonatomic, weak) CALayer *highlight;
+- (void)setIsTopView:(BOOL)isTop;
 @end
 
 @interface JWFolders ()
@@ -175,9 +176,11 @@ static JWFolders *sharedInstance = nil;
     CGImageRef ref1 = CGImageCreateWithImageInRect([screen CGImage], scaledRect);
     
     JWFolderSplitView *b1 = [[JWFolderSplitView alloc] initWithFrame:aRect];
-    b1.isTop = isTop;
+    [b1 setIsTopView:isTop];
     b1.position = position;
+    b1.layer.delegate = b1;
     b1.layer.contents = (__bridge id)(ref1);
+    b1.layer.contentsGravity = kCAGravityCenter;
     CGImageRelease(ref1);
     
     return b1;
@@ -193,16 +196,30 @@ static JWFolders *sharedInstance = nil;
 
 
 @implementation JWFolderSplitView
-@synthesize isTop, position;
+@synthesize position;
 
-- (void)drawRect:(CGRect)rect {    
-    CGContextRef ctx = UIGraphicsGetCurrentContext(); 
-    CGContextSetRGBFillColor(ctx, 1, 1, 1, 0.2); //light color
-    if (self.isTop)
-        CGContextFillRect(ctx, CGRectMake(0, rect.size.height-1, rect.size.width, 1));
-    else 
-        CGContextFillRect(ctx, CGRectMake(0, 0, rect.size.width, 1));
-    [super drawRect:rect];
+- (id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    self.layer.delegate = self;
+    
+    [self createHighlightWithFrame:frame];
+    
+    return self;
+}
+
+- (void)createHighlightWithFrame:(CGRect)aFrame {
+    CGRect frame = aFrame;
+    frame.size.height = 1.f;
+    
+    self.highlight = [CALayer layer];
+    self.highlight.frame = frame;
+    self.highlight.anchorPoint = CGPointZero;
+    self.highlight.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.3f].CGColor;
+    [self.layer addSublayer:self.highlight];
+}
+
+- (void)setIsTopView:(BOOL)isTop {
+    self.highlight.position = CGPointMake(0, isTop?(self.frame.size.height-1):(0) );
 }
 
 @end
