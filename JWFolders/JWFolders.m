@@ -218,7 +218,7 @@ static JWFolders *sharedInstance = nil;
 }
 
 - (void)setIsTopView:(BOOL)isTop {
-    self.highlight.position = CGPointMake(0, isTop?(self.frame.size.height-1):(0) );
+    self.highlight.position = CGPointMake(0, isTop ? (self.frame.size.height-1) : 0);
 }
 
 @end
