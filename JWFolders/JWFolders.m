@@ -180,6 +180,7 @@ static JWFolders *sharedInstance = nil;
     button.position = position;
     button.layer.contents = (__bridge id)(ref1);
     button.layer.contentsGravity = kCAGravityCenter;
+    button.layer.contentsScale = scale;
     CGImageRelease(ref1);
     
     return button;
