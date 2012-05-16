@@ -196,7 +196,8 @@ static JWFolders *sharedInstance = nil;
 
 
 @implementation JWFolderSplitView
-@synthesize position;
+@synthesize position = _position;
+@synthesize highlight = _highlight;
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
