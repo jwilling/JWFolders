@@ -13,7 +13,7 @@
 
 @interface JWFolderSplitView : UIControl
 @property (nonatomic) CGPoint position;
-@property (nonatomic, weak) CALayer *highlight;
+@property (nonatomic, strong) CALayer *highlight;
 - (void)setIsTopView:(BOOL)isTop;
 @end
 
