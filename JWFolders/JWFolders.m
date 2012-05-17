@@ -21,6 +21,7 @@
 - (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position;
 @property (nonatomic, strong) JWFolderSplitView *top;
 @property (nonatomic, strong) JWFolderSplitView *bottom;
+@property (nonatomic, strong) UIImageView *notch;
 @property (nonatomic, assign) CGPoint folderPoint;
 @end
 
@@ -33,6 +34,7 @@
 @synthesize direction = _direction;
 @synthesize folderPoint = _folderPoint;
 @synthesize contentView = _contentView;
+@synthesize notch = _notch;
 @synthesize completionBlock = _completionBlock;
 @synthesize containerView = _containerView;
 @synthesize closeBlock = _closeBlock;
@@ -104,13 +106,16 @@ static JWFolders *sharedInstance = nil;
     [self.top addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     [self.bottom addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     
-    //Todo: Create a "notch", similar to SpringBoard's folders
-    //UIImageView *notch = nil;
-    //notch.center = CGPointMake(position.x, position.y + 7.0);
+    //Todo: Fix it so that the notch actually displayed
+    self.notch = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Notch"]];
+    self.notch.center = CGPointMake(position.x, position.y - (self.notch.frame.size.height/2) + 2);
+//    CGRect containerRect = [containerView convertRect:notch.frame fromView:self.contentView];
+//    NSLog(@"%@ => %@", NSStringFromCGRect(notch.frame), NSStringFromCGRect(containerRect));
     
     [containerView addSubview:self.contentView];
     [containerView addSubview:self.top];
     [containerView addSubview:self.bottom];
+    [containerView addSubview:self.notch];
     
     BOOL up = (direction == JWFoldersOpenDirectionUp);
     CGRect viewFrame = self.contentView.frame;
@@ -150,19 +155,25 @@ static JWFolders *sharedInstance = nil;
     [up ? self.top.layer : self.bottom.layer addAnimation:move forKey:nil];
     if (self.closeBlock) self.closeBlock(self.contentView, duration, timingFunction);
     [(up) ? self.top.layer : self.bottom.layer setPosition:self.folderPoint];
+    
+    [UIView animateWithDuration:duration animations:^{
+        self.notch.alpha = 0.0f;
+    }];
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {        
-        [self.top removeFromSuperview];
-        [self.bottom removeFromSuperview];
-        [self.contentView removeFromSuperview];
-        self.top = nil;
-        self.bottom = nil;
-        self.contentView = nil;
+    if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {
+            [self.top removeFromSuperview];
+            [self.bottom removeFromSuperview];
+            [self.contentView removeFromSuperview];
+            [self.notch removeFromSuperview];
+            self.top = nil;
+            self.bottom = nil;
+            self.contentView = nil;
+            self.notch = nil;
+            if (self.completionBlock) self.completionBlock();
+            sharedInstance = nil;
         
-        if (self.completionBlock) self.completionBlock();
-        sharedInstance = nil;
     }
 }
 
