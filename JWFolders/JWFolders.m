@@ -106,11 +106,8 @@ static JWFolders *sharedInstance = nil;
     [self.top addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     [self.bottom addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     
-    //Todo: Fix it so that the notch actually displayed
     self.notch = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Notch"]];
     self.notch.center = CGPointMake(position.x, position.y - (self.notch.frame.size.height/2) + 2);
-//    CGRect containerRect = [containerView convertRect:notch.frame fromView:self.contentView];
-//    NSLog(@"%@ => %@", NSStringFromCGRect(notch.frame), NSStringFromCGRect(containerRect));
     
     [containerView addSubview:self.contentView];
     [containerView addSubview:self.top];
