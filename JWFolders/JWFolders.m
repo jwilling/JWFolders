@@ -10,6 +10,7 @@
 #import "UIView+Screenshot.h"
 #import "UIScreen+Scale.h"
 #import <QuartzCore/QuartzCore.h>
+#import <libkern/OSAtomic.h>
 
 @interface JWFolderSplitView : UIControl
 @property (nonatomic) CGPoint position;
@@ -21,6 +22,7 @@
 - (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position;
 @property (nonatomic, strong) JWFolderSplitView *top;
 @property (nonatomic, strong) JWFolderSplitView *bottom;
+@property (nonatomic, strong) UIImageView *notch;
 @property (nonatomic, assign) CGPoint folderPoint;
 @end
 
@@ -33,21 +35,38 @@
 @synthesize direction = _direction;
 @synthesize folderPoint = _folderPoint;
 @synthesize contentView = _contentView;
+@synthesize notch = _notch;
 @synthesize completionBlock = _completionBlock;
 @synthesize containerView = _containerView;
 @synthesize closeBlock = _closeBlock;
 @synthesize openBlock = _openBlock;
+@synthesize key = _key;
 
 
-static JWFolders *sharedInstance = nil;
-+ (JWFolders *)sharedInstance {
-	if (!sharedInstance)
+//static JWFolders *sharedInstance = nil;
+static NSMutableDictionary *sharedInstanceDictionary = nil;
+static OSSpinLock lock;
+
++ (JWFolders *)sharedInstanceForKey:(NSString*) key {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstanceDictionary = [[NSMutableDictionary alloc] initWithCapacity:2];
+    });
+    
+    OSSpinLockLock(&lock);
+    JWFolders *sharedInstance = [sharedInstanceDictionary objectForKey:key];
+    if(sharedInstance == nil) {
         sharedInstance = [[self alloc] init];
-	return sharedInstance;
+        sharedInstance.key = key;
+        [sharedInstanceDictionary setValue:sharedInstance forKey:key];
+    }
+    OSSpinLockUnlock(&lock);
+    
+    return sharedInstance;
 }
 
-+ (id)folder {
-    return [self sharedInstance];
++ (id)folderForKey:(NSString*) key {
+    return [self sharedInstanceForKey:key];
 }
 
 - (void)open {
@@ -61,13 +80,14 @@ static JWFolders *sharedInstance = nil;
 }
 
 + (void)openFolderWithContentView:(UIView *)contentView
+                           forKey:(NSString*) key
                          position:(CGPoint)position
                     containerView:(UIView *)containerView
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction {
-    [[self sharedInstance] openFolderWithContentView:contentView
+    [[self sharedInstanceForKey:key] openFolderWithContentView:contentView
                                             position:position
                                        containerView:containerView
                                            openBlock:openBlock
@@ -104,13 +124,13 @@ static JWFolders *sharedInstance = nil;
     [self.top addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     [self.bottom addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     
-    //Todo: Create a "notch", similar to SpringBoard's folders
-    //UIImageView *notch = nil;
-    //notch.center = CGPointMake(position.x, position.y + 7.0);
+    self.notch = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Notch"]];
+    self.notch.center = CGPointMake(position.x, position.y - (self.notch.frame.size.height/2) + 2);
     
     [containerView addSubview:self.contentView];
     [containerView addSubview:self.top];
     [containerView addSubview:self.bottom];
+    [containerView addSubview:self.notch];
     
     BOOL up = (direction == JWFoldersOpenDirectionUp);
     CGRect viewFrame = self.contentView.frame;
@@ -150,19 +170,29 @@ static JWFolders *sharedInstance = nil;
     [up ? self.top.layer : self.bottom.layer addAnimation:move forKey:nil];
     if (self.closeBlock) self.closeBlock(self.contentView, duration, timingFunction);
     [(up) ? self.top.layer : self.bottom.layer setPosition:self.folderPoint];
+    
+    [UIView animateWithDuration:duration animations:^{
+        self.notch.alpha = 0.0f;
+    }];
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {        
+    if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {
         [self.top removeFromSuperview];
         [self.bottom removeFromSuperview];
         [self.contentView removeFromSuperview];
+        [self.notch removeFromSuperview];
         self.top = nil;
         self.bottom = nil;
         self.contentView = nil;
+        self.notch = nil;
+        if (self.completionBlock)
+            self.completionBlock();
         
-        if (self.completionBlock) self.completionBlock();
-        sharedInstance = nil;
+        OSSpinLockLock(&lock);
+        [sharedInstanceDictionary removeObjectForKey:self.key];
+        OSSpinLockUnlock(&lock);
+        
     }
 }
 
@@ -186,9 +216,9 @@ static JWFolders *sharedInstance = nil;
     return button;
 }
 
-+ (void)closeCurrentFolder {
-    if (sharedInstance)
-        [[self sharedInstance] performClose:nil];
++ (void)closeFolderForKey:(NSString*) key {
+    if ([sharedInstanceDictionary objectForKey:key])
+        [[self sharedInstanceForKey:key] performClose:nil];
 }
 
 @end
