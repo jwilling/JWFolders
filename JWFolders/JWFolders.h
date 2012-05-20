@@ -46,6 +46,9 @@ typedef NSInteger JWFoldersOpenDirection;
  * REQUIRED*/
 @property (nonatomic, readwrite) CGPoint position;
 
+/* The key of the shared instance
+ * REQUIRED*/
+@property (nonatomic, strong) NSString *key;
 
 /* Set the direction for the slide.
  * Default is to slide upwards. */
@@ -67,7 +70,7 @@ typedef NSInteger JWFoldersOpenDirection;
 
 
 /* Convenience method for singleton instance. */
-+ (id)folder;
++ (id)folderForKey:(NSString*) key;
 
 
 /* Opens the folder.  Be sure the required properties are set! */
@@ -75,12 +78,13 @@ typedef NSInteger JWFoldersOpenDirection;
 
 
 /* Closes the currently open folder. */
-+ (void)closeCurrentFolder;
++ (void)closeFolderForKey:(NSString*) key;
 
 
 /* Convenience method to open a folder without
  * the hassle of setting properties. */
 + (void)openFolderWithContentView:(UIView *)contentView
+                           forKey:(NSString*)key
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
                         openBlock:(JWFoldersOpenBlock)openBlock

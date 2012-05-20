@@ -10,6 +10,7 @@
 #import "UIView+Screenshot.h"
 #import "UIScreen+Scale.h"
 #import <QuartzCore/QuartzCore.h>
+#import <libkern/OSAtomic.h>
 
 @interface JWFolderSplitView : UIControl
 @property (nonatomic) CGPoint position;
@@ -39,17 +40,33 @@
 @synthesize containerView = _containerView;
 @synthesize closeBlock = _closeBlock;
 @synthesize openBlock = _openBlock;
+@synthesize key = _key;
 
 
-static JWFolders *sharedInstance = nil;
-+ (JWFolders *)sharedInstance {
-	if (!sharedInstance)
+//static JWFolders *sharedInstance = nil;
+static NSMutableDictionary *sharedInstanceDictionary = nil;
+static OSSpinLock lock;
+
++ (JWFolders *)sharedInstanceForKey:(NSString*) key {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstanceDictionary = [[NSMutableDictionary alloc] initWithCapacity:2];
+    });
+    
+    OSSpinLockLock(&lock);
+    JWFolders *sharedInstance = [sharedInstanceDictionary objectForKey:key];
+    if(sharedInstance == nil) {
         sharedInstance = [[self alloc] init];
-	return sharedInstance;
+        sharedInstance.key = key;
+        [sharedInstanceDictionary setValue:sharedInstance forKey:key];
+    }
+    OSSpinLockUnlock(&lock);
+    
+    return sharedInstance;
 }
 
-+ (id)folder {
-    return [self sharedInstance];
++ (id)folderForKey:(NSString*) key {
+    return [self sharedInstanceForKey:key];
 }
 
 - (void)open {
@@ -63,13 +80,14 @@ static JWFolders *sharedInstance = nil;
 }
 
 + (void)openFolderWithContentView:(UIView *)contentView
+                           forKey:(NSString*) key
                          position:(CGPoint)position
                     containerView:(UIView *)containerView
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction {
-    [[self sharedInstance] openFolderWithContentView:contentView
+    [[self sharedInstanceForKey:key] openFolderWithContentView:contentView
                                             position:position
                                        containerView:containerView
                                            openBlock:openBlock
@@ -160,16 +178,20 @@ static JWFolders *sharedInstance = nil;
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
     if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {
-            [self.top removeFromSuperview];
-            [self.bottom removeFromSuperview];
-            [self.contentView removeFromSuperview];
-            [self.notch removeFromSuperview];
-            self.top = nil;
-            self.bottom = nil;
-            self.contentView = nil;
-            self.notch = nil;
-            if (self.completionBlock) self.completionBlock();
-            sharedInstance = nil;
+        [self.top removeFromSuperview];
+        [self.bottom removeFromSuperview];
+        [self.contentView removeFromSuperview];
+        [self.notch removeFromSuperview];
+        self.top = nil;
+        self.bottom = nil;
+        self.contentView = nil;
+        self.notch = nil;
+        if (self.completionBlock)
+            self.completionBlock();
+        
+        OSSpinLockLock(&lock);
+        [sharedInstanceDictionary removeObjectForKey:self.key];
+        OSSpinLockUnlock(&lock);
         
     }
 }
@@ -194,9 +216,9 @@ static JWFolders *sharedInstance = nil;
     return button;
 }
 
-+ (void)closeCurrentFolder {
-    if (sharedInstance)
-        [[self sharedInstance] performClose:nil];
++ (void)closeFolderForKey:(NSString*) key {
+    if ([sharedInstanceDictionary objectForKey:key])
+        [[self sharedInstanceForKey:key] performClose:nil];
 }
 
 @end
