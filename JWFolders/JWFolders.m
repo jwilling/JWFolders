@@ -11,6 +11,10 @@
 #import "UIScreen+Scale.h"
 #import <QuartzCore/QuartzCore.h>
 
+#if ! __has_feature(objc_arc)
+#error This file must be compiled with ARC.
+#endif
+
 @interface JWFolderSplitView : UIControl
 @property (nonatomic) CGPoint position;
 @property (nonatomic, strong) CALayer *highlight;
