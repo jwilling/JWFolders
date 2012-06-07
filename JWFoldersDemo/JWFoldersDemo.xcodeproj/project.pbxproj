@@ -20,7 +20,6 @@
 		AB2CB9F314AE8DAB0072F455 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB2CB9F114AE8DA30072F455 /* QuartzCore.framework */; };
 		AB55EC6214BE09D400FB5BB0 /* wallpaper.png in Resources */ = {isa = PBXBuildFile; fileRef = AB55EC6114BE09D400FB5BB0 /* wallpaper.png */; };
 		AB9280CA14AF8BC5000578BD /* JWFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C514AF8BC5000578BD /* JWFolders.m */; };
-		AB9280CB14AF8BC5000578BD /* UIScreen+Scale.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */; };
 		AB9280CC14AF8BC5000578BD /* UIView+Screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */; };
 		ABF7821314BCED8B0026C74B /* noise.png in Resources */ = {isa = PBXBuildFile; fileRef = ABF7821214BCED8B0026C74B /* noise.png */; };
 /* End PBXBuildFile section */
@@ -46,8 +45,6 @@
 		AB55EC6114BE09D400FB5BB0 /* wallpaper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wallpaper.png; sourceTree = "<group>"; };
 		AB9280C414AF8BC5000578BD /* JWFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWFolders.h; sourceTree = "<group>"; };
 		AB9280C514AF8BC5000578BD /* JWFolders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JWFolders.m; sourceTree = "<group>"; };
-		AB9280C614AF8BC5000578BD /* UIScreen+Scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+Scale.h"; sourceTree = "<group>"; };
-		AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+Scale.m"; sourceTree = "<group>"; };
 		AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Screenshot.h"; sourceTree = "<group>"; };
 		AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Screenshot.m"; sourceTree = "<group>"; };
 		ABAEBA451548E7F80024A279 /* JWFoldersDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = JWFoldersDemo.entitlements; sourceTree = "<group>"; };
@@ -133,8 +130,6 @@
 			children = (
 				AB9280C414AF8BC5000578BD /* JWFolders.h */,
 				AB9280C514AF8BC5000578BD /* JWFolders.m */,
-				AB9280C614AF8BC5000578BD /* UIScreen+Scale.h */,
-				AB9280C714AF8BC5000578BD /* UIScreen+Scale.m */,
 				AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */,
 				AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */,
 			);
@@ -212,7 +207,6 @@
 				AB2CB9CF14AE8CF30072F455 /* ViewController.m in Sources */,
 				AB2CB9DF14AE8D3D0072F455 /* FolderViewController.m in Sources */,
 				AB9280CA14AF8BC5000578BD /* JWFolders.m in Sources */,
-				AB9280CB14AF8BC5000578BD /* UIScreen+Scale.m in Sources */,
 				AB9280CC14AF8BC5000578BD /* UIView+Screenshot.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

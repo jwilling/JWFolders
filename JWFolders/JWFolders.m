@@ -8,7 +8,6 @@
 
 #import "JWFolders.h"
 #import "UIView+Screenshot.h"
-#import "UIScreen+Scale.h"
 #import <QuartzCore/QuartzCore.h>
 
 #if ! __has_feature(objc_arc)
@@ -171,7 +170,7 @@ static JWFolders *sharedInstance = nil;
 }
 
 - (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position {
-    CGFloat scale = [UIScreen screenScale]; 
+    CGFloat scale = [[UIScreen mainScreen] scale]; 
     CGFloat width = aRect.size.width;
     CGFloat height = aRect.size.height;
     CGPoint origin = aRect.origin;
