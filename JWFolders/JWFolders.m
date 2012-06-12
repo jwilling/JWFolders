@@ -18,10 +18,18 @@
 @property (nonatomic) CGPoint position;
 @property (nonatomic, strong) CALayer *highlight;
 - (void)setIsTopView:(BOOL)isTop;
+- (void)createHighlightWithFrame:(CGRect)aFrame;
 @end
 
 @interface JWFolders ()
 - (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position;
+- (void)openFolderWithContentView:(UIView *)contentView
+                         position:(CGPoint)position 
+                    containerView:(UIView *)containerView 
+                        openBlock:(JWFoldersOpenBlock)openBlock 
+                       closeBlock:(JWFoldersCloseBlock)closeBlock
+                  completionBlock:(JWFoldersCompletionBlock)completionBlock
+                        direction:(JWFoldersOpenDirection)direction;
 @property (nonatomic, strong) JWFolderSplitView *top;
 @property (nonatomic, strong) JWFolderSplitView *bottom;
 @property (nonatomic, assign) CGPoint folderPoint;
