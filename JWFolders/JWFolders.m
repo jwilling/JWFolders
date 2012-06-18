@@ -22,7 +22,11 @@
 @end
 
 @interface JWFolders ()
-- (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position;
+- (JWFolderSplitView *)buttonForRect:(CGRect)aRect
+                              screen:(UIImage *)screen
+                            position:(CGPoint)position
+                                 top:(BOOL)isTop
+                         transparent:(BOOL)isTransparent;
 - (void)openFolderWithContentView:(UIView *)contentView
                          position:(CGPoint)position 
                     containerView:(UIView *)containerView 
@@ -102,6 +106,8 @@ static JWFolders *sharedInstance = nil;
     self.completionBlock = completionBlock;
     self.direction = (direction > 0)?direction:JWFoldersOpenDirectionUp;
 
+    BOOL up = (direction == JWFoldersOpenDirectionUp);
+    
     UIImage *screenshot = [containerView screenshot];
     CGFloat width = containerView.frame.size.width;
     CGFloat height = containerView.frame.size.height;
@@ -109,8 +115,16 @@ static JWFolders *sharedInstance = nil;
     CGRect upperRect = CGRectMake(0, 0, width, position.y);
     CGRect lowerRect = CGRectMake(0, position.y, width, height - position.y);
     
-    self.top = [self buttonForRect:upperRect andScreen:screenshot top:YES position:position];
-    self.bottom = [self buttonForRect:lowerRect andScreen:screenshot top:NO position:position];
+    self.top = [self buttonForRect:upperRect
+                            screen:screenshot
+                          position:position
+                               top:YES
+                       transparent:up ? NO : self.isTransparentPane];
+    self.bottom = [self buttonForRect:lowerRect
+                               screen:screenshot
+                             position:position
+                                  top:NO
+                          transparent:up ? self.isTransparentPane : NO];
     
     [self.top addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     [self.bottom addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
@@ -123,7 +137,6 @@ static JWFolders *sharedInstance = nil;
     [containerView addSubview:self.top];
     [containerView addSubview:self.bottom];
     
-    BOOL up = (direction == JWFoldersOpenDirectionUp);
     CGRect viewFrame = self.contentView.frame;
     CGFloat heightPosition = (height - position.y);
     viewFrame.origin.y = (up) ? (height - viewFrame.size.height - heightPosition) : (position.y);
@@ -177,7 +190,11 @@ static JWFolders *sharedInstance = nil;
     }
 }
 
-- (JWFolderSplitView *)buttonForRect:(CGRect)aRect andScreen:(UIImage *)screen top:(BOOL)isTop position:(CGPoint)position {
+- (JWFolderSplitView *)buttonForRect:(CGRect)aRect
+                              screen:(UIImage *)screen
+                            position:(CGPoint)position
+                                 top:(BOOL)isTop
+                         transparent:(BOOL)isTransparent {
     CGFloat scale = [[UIScreen mainScreen] scale]; 
     CGFloat width = aRect.size.width;
     CGFloat height = aRect.size.height;
@@ -189,7 +206,7 @@ static JWFolders *sharedInstance = nil;
     JWFolderSplitView *button = [[JWFolderSplitView alloc] initWithFrame:aRect];
     [button setIsTopView:isTop];
     button.position = position;
-    button.layer.contents = (__bridge id)(ref1);
+    button.layer.contents = isTransparent ? nil : (__bridge id)(ref1);
     button.layer.contentsGravity = kCAGravityCenter;
     button.layer.contentsScale = scale;
     CGImageRelease(ref1);

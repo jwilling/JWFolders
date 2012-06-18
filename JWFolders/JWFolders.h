@@ -52,6 +52,13 @@ typedef NSInteger JWFoldersOpenDirection;
 @property (nonatomic, readwrite) JWFoldersOpenDirection direction;
 
 
+/* Set whether the stationary folder pane should
+ * be transparent to show actual content underneath.
+ * The pane will still absorb touches, so your content
+ * will not recieve touch events. Defaults to NO. */
+@property (nonatomic, getter = isTransparentPane) BOOL transparentPane;
+
+
 /* The following blocks are called at specific
  * times during the lifetime of the folder.
  * 

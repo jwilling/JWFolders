@@ -38,14 +38,28 @@
     NSLog(@"Folder will open down.");
     CGPoint openPoint = CGPointMake(0, CGRectGetHeight(self.view.frame) / 2); //arbitrary point
     
-    //you can also open the folder this way
-    //it could be potentially easier if you don't need the blocks
+    // you can also open the folder this way
+    // it could be potentially easier if you don't need the blocks
     JWFolders *folder = [JWFolders folder];
     folder.contentView = self.sampleFolder.view;
     folder.containerView = self.view;
     folder.position = openPoint;
     folder.direction = JWFoldersOpenDirectionDown;
+    folder.transparentPane = YES;
     [folder open];
+    
+    // quick demo to demonstrate how the stationary pane is see-though
+    [UIView animateWithDuration:0.3f animations:^{
+        [(UIButton *)sender setTransform:CGAffineTransformRotate([(UIButton *)sender transform], M_PI*0.1f)];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.3f animations:^{
+            [(UIButton *)sender setTransform:CGAffineTransformRotate(CGAffineTransformIdentity, -M_PI*0.1f)];
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.3f animations:^{
+                [(UIButton *)sender setTransform:CGAffineTransformIdentity];
+            }];
+        }];
+    }];
 }
 
 @end
