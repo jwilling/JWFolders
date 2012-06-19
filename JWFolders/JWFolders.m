@@ -49,6 +49,7 @@
 @synthesize folderPoint = _folderPoint;
 @synthesize contentView = _contentView;
 @synthesize completionBlock = _completionBlock;
+@synthesize transparentPane = _transparentPane;
 @synthesize containerView = _containerView;
 @synthesize closeBlock = _closeBlock;
 @synthesize openBlock = _openBlock;
