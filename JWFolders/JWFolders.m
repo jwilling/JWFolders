@@ -1,4 +1,4 @@
-/* 
+/*
  Copyright (c) 2011, Jonathan Willing
  All rights reserved.
  Licensed under the BSD License.
@@ -28,9 +28,9 @@
                                  top:(BOOL)isTop
                          transparent:(BOOL)isTransparent;
 - (void)openFolderWithContentView:(UIView *)contentView
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                        openBlock:(JWFoldersOpenBlock)openBlock 
+                         position:(CGPoint)position
+                    containerView:(UIView *)containerView
+                        openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction;
@@ -93,9 +93,9 @@ static JWFolders *sharedInstance = nil;
 }
 
 - (void)openFolderWithContentView:(UIView *)contentView
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
-                        openBlock:(JWFoldersOpenBlock)openBlock 
+                         position:(CGPoint)position
+                    containerView:(UIView *)containerView
+                        openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction {
@@ -106,8 +106,11 @@ static JWFolders *sharedInstance = nil;
     self.closeBlock = closeBlock;
     self.completionBlock = completionBlock;
     self.direction = (direction > 0)?direction:JWFoldersOpenDirectionUp;
-
+    
     BOOL up = (direction == JWFoldersOpenDirectionUp);
+    
+    contentView.layer.shouldRasterize = self.shouldRasterizeContent;
+    contentView.layer.rasterizationScale = [[UIScreen mainScreen] scale];
     
     UIImage *screenshot = [containerView screenshot];
     CGFloat width = containerView.frame.size.width;
@@ -156,7 +159,7 @@ static JWFolders *sharedInstance = nil;
     move.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
     move.toValue = [NSValue valueWithCGPoint:toPoint];
     [up ? self.top.layer : self.bottom.layer addAnimation:move forKey:nil];
-
+    
     if (openBlock) openBlock(self.contentView, duration, timingFunction);
     [(up) ? self.top.layer : self.bottom.layer setPosition:toPoint];
 }
@@ -178,7 +181,7 @@ static JWFolders *sharedInstance = nil;
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {        
+    if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {
         [self.top removeFromSuperview];
         [self.bottom removeFromSuperview];
         [self.contentView removeFromSuperview];
@@ -196,7 +199,7 @@ static JWFolders *sharedInstance = nil;
                             position:(CGPoint)position
                                  top:(BOOL)isTop
                          transparent:(BOOL)isTransparent {
-    CGFloat scale = [[UIScreen mainScreen] scale]; 
+    CGFloat scale = [[UIScreen mainScreen] scale];
     CGFloat width = aRect.size.width;
     CGFloat height = aRect.size.height;
     CGPoint origin = aRect.origin;

@@ -1,4 +1,4 @@
-/* 
+/*
  Copyright (c) 2011, Jonathan Willing
  All rights reserved.
  Licensed under the BSD License.
@@ -23,16 +23,16 @@ typedef NSInteger JWFoldersOpenDirection;
 
 @interface JWFolders : NSObject
 
-/* The view to be embedded between 
- * two folder-style panels. 
+/* The view to be embedded between
+ * two folder-style panels.
  *
  * REQUIRED */
 @property (nonatomic, strong) UIView *contentView;
 
 
-/* This is the view in which you wish the folders to be 
- * added as a subview of. Behaviour when the container 
- * view is smaller than the content view is undefined. 
+/* This is the view in which you wish the folders to be
+ * added as a subview of. Behaviour when the container
+ * view is smaller than the content view is undefined.
  *
  * REQUIRED */
 @property (nonatomic, strong) UIView *containerView;
@@ -41,7 +41,7 @@ typedef NSInteger JWFoldersOpenDirection;
 /* The position is used to determine where the folders should
  * be opened.  In later updates the x-coordinate will be used
  * to create a "notch", similar to the iOS Springboard. The
- * position should be relative to the container view. 
+ * position should be relative to the container view.
  *
  * REQUIRED*/
 @property (nonatomic, readwrite) CGPoint position;
@@ -59,9 +59,15 @@ typedef NSInteger JWFoldersOpenDirection;
 @property (nonatomic, getter = isTransparentPane) BOOL transparentPane;
 
 
+/*
+ Experimental setting that sets the shouldRasterize property
+ on the content view's layer. Defaults to NO.
+ */
+@property (nonatomic, assign) BOOL shouldRasterizeContent;
+
 /* The following blocks are called at specific
  * times during the lifetime of the folder.
- * 
+ *
  * The open & close blocks are called immediately before
  * the folder is about to open or close, respectively.
  *
@@ -88,8 +94,8 @@ typedef NSInteger JWFoldersOpenDirection;
 /* Convenience method to open a folder without
  * the hassle of setting properties. */
 + (void)openFolderWithContentView:(UIView *)contentView
-                         position:(CGPoint)position 
-                    containerView:(UIView *)containerView 
+                         position:(CGPoint)position
+                    containerView:(UIView *)containerView
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
