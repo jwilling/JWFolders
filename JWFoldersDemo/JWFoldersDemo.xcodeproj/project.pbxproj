@@ -21,6 +21,7 @@
 		AB55EC6214BE09D400FB5BB0 /* wallpaper.png in Resources */ = {isa = PBXBuildFile; fileRef = AB55EC6114BE09D400FB5BB0 /* wallpaper.png */; };
 		AB9280CA14AF8BC5000578BD /* JWFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C514AF8BC5000578BD /* JWFolders.m */; };
 		AB9280CC14AF8BC5000578BD /* UIView+Screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */; };
+		ABC282A615DCBAF9005801FB /* JWFolders.bundle in Resources */ = {isa = PBXBuildFile; fileRef = ABC282A515DCBAF9005801FB /* JWFolders.bundle */; };
 		ABF7821314BCED8B0026C74B /* noise.png in Resources */ = {isa = PBXBuildFile; fileRef = ABF7821214BCED8B0026C74B /* noise.png */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,7 @@
 		AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Screenshot.h"; sourceTree = "<group>"; };
 		AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Screenshot.m"; sourceTree = "<group>"; };
 		ABAEBA451548E7F80024A279 /* JWFoldersDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = JWFoldersDemo.entitlements; sourceTree = "<group>"; };
+		ABC282A515DCBAF9005801FB /* JWFolders.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = JWFolders.bundle; sourceTree = "<group>"; };
 		ABF7821214BCED8B0026C74B /* noise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noise.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,6 +132,7 @@
 			children = (
 				AB9280C414AF8BC5000578BD /* JWFolders.h */,
 				AB9280C514AF8BC5000578BD /* JWFolders.m */,
+				ABC282A515DCBAF9005801FB /* JWFolders.bundle */,
 				AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */,
 				AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */,
 			);
@@ -192,6 +195,7 @@
 				AB2CB9E014AE8D3D0072F455 /* FolderViewController.xib in Resources */,
 				ABF7821314BCED8B0026C74B /* noise.png in Resources */,
 				AB55EC6214BE09D400FB5BB0 /* wallpaper.png in Resources */,
+				ABC282A615DCBAF9005801FB /* JWFolders.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +243,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -255,6 +260,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -265,6 +271,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -275,6 +282,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -283,7 +291,6 @@
 		AB2CB9D614AE8CF30072F455 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = JWFoldersDemo/JWFoldersDemo.entitlements;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JWFoldersDemo/JWFoldersDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
@@ -296,7 +303,6 @@
 		AB2CB9D714AE8CF30072F455 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = JWFoldersDemo/JWFoldersDemo.entitlements;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JWFoldersDemo/JWFoldersDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;

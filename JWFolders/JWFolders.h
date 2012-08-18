@@ -20,8 +20,11 @@ enum JWFoldersOpenDirection {
 };
 typedef NSInteger JWFoldersOpenDirection;
 
-
 @interface JWFolders : NSObject
+
+/* Designated convenience initializer */
++ (id)folder;
+
 
 /* The view to be embedded between
  * two folder-style panels.
@@ -43,27 +46,51 @@ typedef NSInteger JWFoldersOpenDirection;
  * to create a "notch", similar to the iOS Springboard. The
  * position should be relative to the container view.
  *
- * REQUIRED*/
+ * REQUIRED */
 @property (nonatomic, readwrite) CGPoint position;
 
 
 /* Set the direction for the slide.
- * Default is to slide upwards. */
+ * Default is JWFoldersOpenDirectionUp. */
 @property (nonatomic, readwrite) JWFoldersOpenDirection direction;
 
 
-/* Set whether the stationary folder pane should
+/* Sets whether a triangle is drawn pointing toward the 
+ * opening position. NB: The background of the content view 
+ * must be repeatable. Defaults to NO. */
+@property (nonatomic, assign) BOOL showsNotch;
+
+
+/* Sets whether the upper and lower panes have a darkened
+ * effect applied to them when animating to the open position.
+ * This could help to offset your content from the surrounding views.
+ * Defaults to NO. */
+@property (nonatomic, assign) BOOL darkensBackground;
+
+
+/* Sets the background color of the content view
+ * and the notch. Only used if showsTriangle is
+ * set to YES. Defaults to nil. */
+@property (nonatomic, strong) UIColor *contentBackgroundColor;
+
+
+/* Sets whether the stationary folder pane should
  * be transparent to show actual content underneath.
  * The pane will still absorb touches, so your content
  * will not recieve touch events. Defaults to NO. */
-@property (nonatomic, getter = isTransparentPane) BOOL transparentPane;
+@property (nonatomic, assign) BOOL transparentPane;
 
 
-/*
- Experimental setting that sets the shouldRasterize property
- on the content view's layer. Defaults to NO.
- */
+/* Sets whether the panes cast shadows over the content view.
+ * The moving pane will have a shadow with a constant position
+ * for performance reasons. Defaults to NO; */
+@property (nonatomic, assign) BOOL shadowsEnabled;
+
+
+/* Experimental setting that sets the shouldRasterize property
+ * on the content view's layer. Defaults to NO. */
 @property (nonatomic, assign) BOOL shouldRasterizeContent;
+
 
 /* The following blocks are called at specific
  * times during the lifetime of the folder.
@@ -72,33 +99,30 @@ typedef NSInteger JWFoldersOpenDirection;
  * the folder is about to open or close, respectively.
  *
  * The completion block is called when all views
- * have been removed, and the folder is completely closed.
- */
+ * have been removed, and the folder is completely closed. */
 @property (nonatomic, copy) JWFoldersOpenBlock openBlock;
 @property (nonatomic, copy) JWFoldersCloseBlock closeBlock;
 @property (nonatomic, copy) JWFoldersCompletionBlock completionBlock;
 
 
-/* Convenience method for singleton instance. */
-+ (id)folder;
-
-
-/* Opens the folder.  Be sure the required properties are set! */
+/* Opens the folder. Be sure the required properties are set! */
 - (void)open;
 
 
 /* Closes the currently open folder. */
-+ (void)closeCurrentFolder;
+- (void)closeCurrentFolder;
 
 
-/* Convenience method to open a folder without
- * the hassle of setting properties. */
+#pragma mark -
+#pragma mark Deprecated methods
+
+/* Deprecated in favor of using properties. */
 + (void)openFolderWithContentView:(UIView *)contentView
                          position:(CGPoint)position
                     containerView:(UIView *)containerView
                         openBlock:(JWFoldersOpenBlock)openBlock
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
-                        direction:(JWFoldersOpenDirection)direction;
+                        direction:(JWFoldersOpenDirection)direction __attribute__((deprecated));
 
 @end

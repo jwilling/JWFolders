@@ -14,19 +14,31 @@
 #error This file must be compiled with ARC.
 #endif
 
+const CGFloat JWFoldersTriangleWidth = 26.f;
+const CGFloat JWFoldersTriangleHeight = 12.f;
+const CGFloat JWFoldersHighlightOpacity = 0.35f;
+const CGFloat JWFoldersOpeningDuration = 0.4f;
+
 @interface JWFolderSplitView : UIControl
 @property (nonatomic) CGPoint position;
-@property (nonatomic, strong) CALayer *highlight;
-- (void)setIsTopView:(BOOL)isTop;
-- (void)createHighlightWithFrame:(CGRect)aFrame;
+@property (nonatomic, strong) CAShapeLayer *highlight;
+@property (nonatomic, assign) BOOL showsNotch;
+@property (nonatomic, assign) BOOL top;
+@property (nonatomic, assign) BOOL openingUp;
+@property (nonatomic, assign) BOOL darkensBackground;
+- (void)setHighlightOpacity:(CGFloat)opacity withDuration:(CFTimeInterval)duration;
 @end
 
-@interface JWFolders ()
+@interface JWFolders () {
+    JWFolders *_strongSelf;
+}
 - (JWFolderSplitView *)buttonForRect:(CGRect)aRect
                               screen:(UIImage *)screen
                             position:(CGPoint)position
                                  top:(BOOL)isTop
-                         transparent:(BOOL)isTransparent;
+                         transparent:(BOOL)isTransparent
+                           openingUp:(BOOL)openingUp;
+
 - (void)openFolderWithContentView:(UIView *)contentView
                          position:(CGPoint)position
                     containerView:(UIView *)containerView
@@ -34,9 +46,11 @@
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction;
+
 @property (nonatomic, strong) JWFolderSplitView *top;
 @property (nonatomic, strong) JWFolderSplitView *bottom;
 @property (nonatomic, assign) CGPoint folderPoint;
+@property (nonatomic, strong) UIView *contentViewContainer;
 @end
 
 
@@ -54,16 +68,18 @@
 @synthesize closeBlock = _closeBlock;
 @synthesize openBlock = _openBlock;
 
-
-static JWFolders *sharedInstance = nil;
-+ (JWFolders *)sharedInstance {
-	if (!sharedInstance)
-        sharedInstance = [[self alloc] init];
-	return sharedInstance;
++ (id)folder {
+    return [[self alloc] init];
 }
 
-+ (id)folder {
-    return [self sharedInstance];
+- (id)init {
+    self = [super init];
+    if (self) {
+        // keep a strong reference to self so that we don't disappear
+        //when used as a local variable, much like UIAlertView.
+        _strongSelf = self;
+    }
+    return self;
 }
 
 - (void)open {
@@ -83,13 +99,13 @@ static JWFolders *sharedInstance = nil;
                        closeBlock:(JWFoldersCloseBlock)closeBlock
                   completionBlock:(JWFoldersCompletionBlock)completionBlock
                         direction:(JWFoldersOpenDirection)direction {
-    [[self sharedInstance] openFolderWithContentView:contentView
-                                            position:position
-                                       containerView:containerView
-                                           openBlock:openBlock
-                                          closeBlock:closeBlock
-                                     completionBlock:completionBlock
-                                           direction:direction];
+    [[[self alloc] init] openFolderWithContentView:contentView
+                                          position:position
+                                     containerView:containerView
+                                         openBlock:openBlock
+                                        closeBlock:closeBlock
+                                   completionBlock:completionBlock
+                                         direction:direction];
 }
 
 - (void)openFolderWithContentView:(UIView *)contentView
@@ -101,6 +117,8 @@ static JWFolders *sharedInstance = nil;
                         direction:(JWFoldersOpenDirection)direction {
     NSAssert(contentView && containerView, @"Content or container views must not be nil.");
     
+    UIImage *screenshot = [containerView screenshot];
+    
     self.contentView = contentView;
     self.openBlock = openBlock;
     self.closeBlock = closeBlock;
@@ -109,88 +127,148 @@ static JWFolders *sharedInstance = nil;
     
     BOOL up = (direction == JWFoldersOpenDirectionUp);
     
+    // I doubt this will help performance, because the content view itself
+    // isn't the one being animated.
+    CGFloat scale = [[UIScreen mainScreen] scale];
     contentView.layer.shouldRasterize = self.shouldRasterizeContent;
-    contentView.layer.rasterizationScale = [[UIScreen mainScreen] scale];
+    contentView.layer.rasterizationScale = scale;
     
-    UIImage *screenshot = [containerView screenshot];
-    CGFloat width = containerView.frame.size.width;
-    CGFloat height = containerView.frame.size.height;
+    CGFloat containerWidth = containerView.frame.size.width;
+    CGFloat containerHeight = containerView.frame.size.height;
     
-    CGRect upperRect = CGRectMake(0, 0, width, position.y);
-    CGRect lowerRect = CGRectMake(0, position.y, width, height - position.y);
+    CGRect upperRect = CGRectMake(0, 0, containerWidth, position.y);
+    CGRect lowerRect = CGRectMake(0, position.y, containerWidth, containerHeight - position.y);
     
-    self.top = [self buttonForRect:upperRect
-                            screen:screenshot
-                          position:position
-                               top:YES
-                       transparent:up ? NO : self.isTransparentPane];
-    self.bottom = [self buttonForRect:lowerRect
-                               screen:screenshot
-                             position:position
-                                  top:NO
-                          transparent:up ? self.isTransparentPane : NO];
-    
+    self.top = [self buttonForRect:upperRect screen:screenshot position:position top:YES transparent:up ? NO : self.transparentPane openingUp:up];
+    self.bottom = [self buttonForRect:lowerRect screen:screenshot position:position top:NO transparent:up ? self.transparentPane : NO openingUp:up];
     [self.top addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     [self.bottom addTarget:self action:@selector(performClose:) forControlEvents:UIControlEventTouchUpInside];
     
-    //Todo: Create a "notch", similar to SpringBoard's folders
-    //UIImageView *notch = nil;
-    //notch.center = CGPointMake(position.x, position.y + 7.0);
+    self.contentViewContainer = [[UIView alloc] initWithFrame:self.contentView.frame];
     
-    [containerView addSubview:self.contentView];
+    [containerView addSubview:self.contentViewContainer];
     [containerView addSubview:self.top];
     [containerView addSubview:self.bottom];
     
-    CGRect viewFrame = self.contentView.frame;
-    CGFloat heightPosition = (height - position.y);
-    viewFrame.origin.y = (up) ? (height - viewFrame.size.height - heightPosition) : (position.y);
-    self.contentView.frame = viewFrame;
+    CGRect contentFrame = self.contentView.frame;
+    // depending on whether we're opening up or down, set the orign of the container to sit flush with the stationary view
+    contentFrame.origin.y = (up) ? (containerHeight - contentFrame.size.height - (containerHeight - position.y)) : (position.y);
     
-    CGPoint toPoint;
-    CFTimeInterval duration = 0.4f;
+    if (self.showsNotch) {
+        // if there is no background color, there's really nothing to
+        // put in the notch (triangle) view. So, we should make sure we
+        // have a color.
+        NSAssert(self.contentBackgroundColor, @"contentBackgroundColor must not be nil");
+        
+        // the current limitation of this is that if the background isn't repeatable
+        // there really is no way to customize how this is drawn. But for now,
+        // it seems to be the most flexible way without knowing implementation details.
+        self.contentView.backgroundColor = nil;
+        self.contentViewContainer.backgroundColor = self.contentBackgroundColor;
+        
+        // make the content view container fill to fit the new dimensions
+        // and draw all the way through the triangle.
+        contentFrame.size.height += JWFoldersTriangleHeight;
+        contentFrame.origin.y -= up ? 0 : JWFoldersTriangleHeight;
+    }
+    self.contentViewContainer.frame = contentFrame;
+    
+    
+    // put the real content view into the stretched (if triangle enabled) container for the content view
+    [self.contentViewContainer addSubview:self.contentView];
+    
+    
+    // position the view correctly in the container view, offset the origin when direction requires it
+    CGRect newContentFrame = self.contentView.frame;
+    newContentFrame.origin = CGPointMake(0, self.showsNotch ? (up ? 0 : JWFoldersTriangleHeight) : 0);
+    self.contentView.frame = newContentFrame;
+    
     CGFloat contentHeight = self.contentView.frame.size.height;
-    CABasicAnimation *move = [CABasicAnimation animationWithKeyPath:@"position"];
-    CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    move.duration = duration;
-    move.timingFunction = timingFunction;
-    
     self.folderPoint = (up) ? self.top.layer.position : self.bottom.layer.position;
-    toPoint = (CGPoint){ self.folderPoint.x, (up) ? (self.folderPoint.y - contentHeight) : (self.folderPoint.y + contentHeight)};
+    CGPoint toPoint = (CGPoint){ self.folderPoint.x, (up) ? (self.folderPoint.y - contentHeight) : (self.folderPoint.y + contentHeight)};
+    
+    if (self.shadowsEnabled) {
+        // add the inner shadows using UIImageViews, which might seem heavy but in fact they're
+        // rendered by the GPU, whereas a CALayer for instance is rendered by the CPU. We want
+        // all the rendering speed we can get. Besides, the images will get cached for faster reloads.
+        
+        UIImage *topShadow = nil;
+        UIImage *bottomShadow = nil;
+        if (self.showsNotch) {
+            topShadow = [UIImage imageNamed:up ? @"JWFolders.bundle/shadow_top" : @"JWFolders.bundle/shadow_top_notch"];
+            bottomShadow = [UIImage imageNamed:up ? @"JWFolders.bundle/shadow_low_notch" : @"JWFolders.bundle/shadow_low"];
+        } else {
+            topShadow = [UIImage imageNamed:@"JWFolders.bundle/shadow_top"];
+            bottomShadow = [UIImage imageNamed:@"JWFolders.bundle/shadow_low"];
+        }
+
+        UIImageView *topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, contentFrame.size.width, topShadow.size.height)];
+        UIImageView *bottomImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, contentFrame.size.height - (bottomShadow.size.height),
+                                                                                     contentFrame.size.width, bottomShadow.size.height)];
+        topImageView.image = topShadow;
+        bottomImageView.image = bottomShadow;
+        [self.contentViewContainer addSubview:topImageView];
+        [self.contentViewContainer addSubview:bottomImageView];
+    }
+    
+    // animate the sliding of the moveable pane upwards / downwards
+    CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    CABasicAnimation *move = [CABasicAnimation animationWithKeyPath:@"position"];
+    [move setValue:@"open" forKey:@"animationKey"];
+    move.delegate = self;
+    move.duration = JWFoldersOpeningDuration;
+    move.timingFunction = timingFunction;
     move.fromValue = [NSValue valueWithCGPoint:self.folderPoint];
     move.toValue = [NSValue valueWithCGPoint:toPoint];
     [up ? self.top.layer : self.bottom.layer addAnimation:move forKey:nil];
     
-    if (openBlock) openBlock(self.contentView, duration, timingFunction);
+    if (openBlock) {
+        openBlock(self.contentView, JWFoldersOpeningDuration, timingFunction);
+    }
+    
     [(up) ? self.top.layer : self.bottom.layer setPosition:toPoint];
+    
+    // sets the highlight on the bottom / top of the panes to fade in / out for a convincing effect
+    [self.top setHighlightOpacity:1.f withDuration:JWFoldersOpeningDuration];
+    [self.bottom setHighlightOpacity:1.f withDuration:JWFoldersOpeningDuration];
 }
 
 - (void)performClose:(id)sender {
-    CFTimeInterval duration = 0.4f;
     BOOL up = (self.direction == JWFoldersOpenDirectionUp);
     CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     CABasicAnimation *move = [CABasicAnimation animationWithKeyPath:@"position"];
-    [move setValue:@"close" forKey:@"animationType"];
+    [move setValue:@"close" forKey:@"animationKey"];
     [move setDelegate:self];
     [move setTimingFunction:timingFunction];
     move.fromValue = [NSValue valueWithCGPoint:[[(up) ? self.top.layer : self.bottom.layer presentationLayer] position]];
     move.toValue = [NSValue valueWithCGPoint:_folderPoint];
-    move.duration = duration;
+    move.duration = JWFoldersOpeningDuration;
     [up ? self.top.layer : self.bottom.layer addAnimation:move forKey:nil];
-    if (self.closeBlock) self.closeBlock(self.contentView, duration, timingFunction);
+    if (self.closeBlock) self.closeBlock(self.contentView, JWFoldersOpeningDuration, timingFunction);
     [(up) ? self.top.layer : self.bottom.layer setPosition:self.folderPoint];
+    
+    [self.top setHighlightOpacity:0.f withDuration:JWFoldersOpeningDuration];
+    [self.bottom setHighlightOpacity:0.f withDuration:JWFoldersOpeningDuration];
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    if ([[anim valueForKey:@"animationType"] isEqualToString:@"close"]) {
+    if ([[anim valueForKey:@"animationKey"] isEqualToString:@"close"]) {
+        if (self.shouldRasterizeContent) {
+            self.contentView.layer.shouldRasterize = NO;
+        }
+    }
+    
+    if ([[anim valueForKey:@"animationKey"] isEqualToString:@"close"]) {
         [self.top removeFromSuperview];
         [self.bottom removeFromSuperview];
         [self.contentView removeFromSuperview];
-        self.top = nil;
-        self.bottom = nil;
-        self.contentView = nil;
+        [self.contentViewContainer removeFromSuperview];
         
-        if (self.completionBlock) self.completionBlock();
-        sharedInstance = nil;
+        if (self.completionBlock) {
+            self.completionBlock();
+        }
+        
+        _strongSelf = nil;
     }
 }
 
@@ -198,7 +276,9 @@ static JWFolders *sharedInstance = nil;
                               screen:(UIImage *)screen
                             position:(CGPoint)position
                                  top:(BOOL)isTop
-                         transparent:(BOOL)isTransparent {
+                         transparent:(BOOL)isTransparent
+                           openingUp:(BOOL)openingUp {
+    
     CGFloat scale = [[UIScreen mainScreen] scale];
     CGFloat width = aRect.size.width;
     CGFloat height = aRect.size.height;
@@ -208,24 +288,27 @@ static JWFolders *sharedInstance = nil;
     CGImageRef ref1 = CGImageCreateWithImageInRect([screen CGImage], scaledRect);
     
     JWFolderSplitView *button = [[JWFolderSplitView alloc] initWithFrame:aRect];
-    [button setIsTopView:isTop];
+    button.top = isTop;
     button.position = position;
     button.layer.contents = isTransparent ? nil : (__bridge id)(ref1);
     button.layer.contentsGravity = kCAGravityCenter;
     button.layer.contentsScale = scale;
+    button.highlight.opacity = 0.f;
+    button.openingUp = openingUp;
+    button.darkensBackground = self.darkensBackground;
+    button.layer.shouldRasterize = (openingUp && !isTop) || (!openingUp && isTop);
+    button.layer.rasterizationScale = screen.scale;
+    button.showsNotch = self.showsNotch;
     CGImageRelease(ref1);
     
     return button;
 }
 
-+ (void)closeCurrentFolder {
-    if (sharedInstance)
-        [[self sharedInstance] performClose:nil];
+- (void)closeCurrentFolder {
+    [self performClose:self];
 }
 
 @end
-
-
 
 @implementation JWFolderSplitView
 @synthesize position = _position;
@@ -244,15 +327,113 @@ static JWFolders *sharedInstance = nil;
     CGRect frame = aFrame;
     frame.size.height = 1.f;
     
-    self.highlight = [CALayer layer];
-    self.highlight.frame = frame;
-    self.highlight.anchorPoint = CGPointZero;
-    self.highlight.backgroundColor = [UIColor colorWithWhite:1.f alpha:0.3f].CGColor;
-    [self.layer addSublayer:self.highlight];
+    _highlight = [CAShapeLayer layer];
+    _highlight.frame = self.bounds;
+    _highlight.strokeColor = [UIColor colorWithWhite:1.f alpha:JWFoldersHighlightOpacity].CGColor;
+    _highlight.fillColor = nil;
+    [self.layer addSublayer:_highlight];
 }
 
-- (void)setIsTopView:(BOOL)isTop {
-    self.highlight.position = CGPointMake(0, isTop ? (self.frame.size.height-1) : 0);
+- (void)setShowsNotch:(BOOL)showsNotch {
+    _showsNotch = showsNotch;
+    
+    if (showsNotch) {
+        CAShapeLayer *maskLayer = [CAShapeLayer layer];
+        maskLayer.fillColor = [UIColor blackColor].CGColor;
+        maskLayer.path = [self maskPath].CGPath;
+        maskLayer.frame = self.bounds;
+        
+        // This sets mask the layer to get the shape of the notch drawn correctly.
+        // Setting the layer mask is *extremely* expensive, so we double check that
+        // we're not setting this on a view that is being animated. Otherwise, we can
+        // kiss our good FPS goodbye.
+        if ((self.openingUp && !self.top) || (!self.openingUp && self.top)) {
+            self.layer.mask = maskLayer;
+        }
+    }
+    
+    self.highlight.path = [self highlightPath].CGPath;
+}
+
+- (void)setDarkensBackground:(BOOL)darkensBackground {
+    _darkensBackground = darkensBackground;
+    if (darkensBackground) {
+        self.highlight.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2].CGColor;
+    }
+}
+
+- (void)setHighlightOpacity:(CGFloat)opacity withDuration:(CFTimeInterval)duration {
+    CAKeyframeAnimation *opacityAnimation = [CAKeyframeAnimation animationWithKeyPath:@"opacity"];
+    if (opacity == 0.f) { // going to 0
+        opacityAnimation.values = [NSArray arrayWithObjects:
+                                   [NSNumber numberWithFloat:1.f],
+                                   [NSNumber numberWithFloat:1.f],
+                                   [NSNumber numberWithFloat:0.f], nil];
+        opacityAnimation.keyTimes = [NSArray arrayWithObjects:
+                                     [NSNumber numberWithFloat:0.0f],
+                                     [NSNumber numberWithFloat:0.7f],
+                                     [NSNumber numberWithFloat:1.f], nil];
+    } else { // going to 1
+        opacityAnimation.values = [NSArray arrayWithObjects:
+                                   [NSNumber numberWithFloat:0.f],
+                                   [NSNumber numberWithFloat:1.f],
+                                   [NSNumber numberWithFloat:1.f], nil];
+        opacityAnimation.keyTimes = [NSArray arrayWithObjects:
+                                     [NSNumber numberWithFloat:0.0f],
+                                     [NSNumber numberWithFloat:0.3f],
+                                     [NSNumber numberWithFloat:1.f], nil];
+    }
+    opacityAnimation.duration = duration;
+    opacityAnimation.fillMode = kCAFillModeForwards;
+    opacityAnimation.removedOnCompletion = NO;
+    [self.highlight addAnimation:opacityAnimation forKey:@"opacityAnimation"];
+}
+
+- (UIBezierPath *)maskPath {
+    UIBezierPath *maskPath = [UIBezierPath bezierPath];
+    
+    CGFloat height = self.bounds.size.height;
+    CGFloat width = self.bounds.size.width;
+    
+    [maskPath moveToPoint:CGPointZero];
+    if (self.showsNotch && self.openingUp && !self.top) {
+        [maskPath addLineToPoint:CGPointMake(self.position.x - (JWFoldersTriangleWidth / 2), 0)];
+        [maskPath addLineToPoint:CGPointMake(self.position.x, JWFoldersTriangleHeight)];
+        [maskPath addLineToPoint:CGPointMake(self.position.x + (JWFoldersTriangleWidth / 2), 0)];
+    }
+    [maskPath addLineToPoint:CGPointMake(width, 0)];
+    [maskPath addLineToPoint:CGPointMake(width, height)];
+    if (self.showsNotch && !self.openingUp && self.top) {
+        [maskPath addLineToPoint:CGPointMake(self.position.x + (JWFoldersTriangleWidth / 2), height)];
+        [maskPath addLineToPoint:CGPointMake(self.position.x, height - JWFoldersTriangleHeight)];
+        [maskPath addLineToPoint:CGPointMake(self.position.x - (JWFoldersTriangleWidth / 2), height)];
+    }
+    [maskPath addLineToPoint:CGPointMake(0, height)];
+    [maskPath addLineToPoint:CGPointZero];
+    [maskPath closePath];
+    return maskPath;
+}
+
+- (UIBezierPath *)highlightPath {
+    UIBezierPath *highlightPath = [UIBezierPath bezierPath];
+    
+    CGSize size = self.bounds.size;
+    [highlightPath moveToPoint:self.top ? CGPointMake(0, size.height - 0.5) : CGPointMake(0, 0.5)];
+    
+    if (self.showsNotch && self.openingUp && !self.top) {
+        [highlightPath addLineToPoint:CGPointMake(self.position.x - (JWFoldersTriangleWidth / 2), 0.5)];
+        [highlightPath addLineToPoint:CGPointMake(self.position.x, JWFoldersTriangleHeight + 0.5)];
+        [highlightPath addLineToPoint:CGPointMake(self.position.x + (JWFoldersTriangleWidth / 2), 0.5)];
+    } else if (self.showsNotch && !self.openingUp && self.top) {
+        [highlightPath addLineToPoint:CGPointMake(self.position.x - (JWFoldersTriangleWidth / 2), size.height - 0.5)];
+        [highlightPath addLineToPoint:CGPointMake(self.position.x, size.height - JWFoldersTriangleHeight - 0.5)];
+        [highlightPath addLineToPoint:CGPointMake(self.position.x + (JWFoldersTriangleWidth / 2), size.height - 0.5)];
+    }
+    
+    [highlightPath addLineToPoint:self.top ? CGPointMake(size.width, size.height - 0.5) : CGPointMake(size.width, 0.5)];
+    [highlightPath closePath];
+    
+    return highlightPath;
 }
 
 @end
