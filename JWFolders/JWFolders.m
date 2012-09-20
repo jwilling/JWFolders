@@ -75,8 +75,7 @@ const CGFloat JWFoldersOpeningDuration = 0.4f;
 - (id)init {
     self = [super init];
     if (self) {
-        // keep a strong reference to self so that we don't disappear
-        //when used as a local variable, much like UIAlertView.
+        // keep ourself around
         _strongSelf = self;
     }
     return self;

@@ -132,9 +132,9 @@
 			children = (
 				AB9280C414AF8BC5000578BD /* JWFolders.h */,
 				AB9280C514AF8BC5000578BD /* JWFolders.m */,
-				ABC282A515DCBAF9005801FB /* JWFolders.bundle */,
 				AB9280C814AF8BC5000578BD /* UIView+Screenshot.h */,
 				AB9280C914AF8BC5000578BD /* UIView+Screenshot.m */,
+				ABC282A515DCBAF9005801FB /* JWFolders.bundle */,
 			);
 			name = JWFolders;
 			path = ../../JWFolders;
