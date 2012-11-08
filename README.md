@@ -34,7 +34,7 @@ The project currently uses [Automatic Reference Counting](http://clang.llvm.org/
 
 ##Important note
 
-This library makes use of `CLayer`'s `renderInContext:` method to render the current state of your view into an image. Unfortunately, `renderInContext:` does not take 3D transforms into account. If you would like this to be fixed, please [file a radar](https://bugreport.apple.com).
+This library makes use of `CALayer`'s `renderInContext:` method to render the current state of your view into an image. Unfortunately, `renderInContext:` does not take 3D transforms into account. If you would like this to be fixed, please [file a radar](https://bugreport.apple.com).
 
 ##License
 `JWFolders` is licensed under the [BSD License](http://www.opensource.org/licenses/bsd-license).
