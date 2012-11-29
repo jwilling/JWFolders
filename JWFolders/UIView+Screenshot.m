@@ -12,7 +12,7 @@
 @implementation UIView (Screenshot)
 
 - (UIImage *)screenshot {	
-    UIGraphicsBeginImageContextWithOptions(self.frame.size, NO, 0.0);
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, 0.0);
 
     [self.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *screenshot = UIGraphicsGetImageFromCurrentImageContext();
