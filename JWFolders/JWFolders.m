@@ -132,8 +132,8 @@ const CGFloat JWFoldersOpeningDuration = 0.4f;
     contentView.layer.shouldRasterize = self.shouldRasterizeContent;
     contentView.layer.rasterizationScale = scale;
     
-    CGFloat containerWidth = containerView.frame.size.width;
-    CGFloat containerHeight = containerView.frame.size.height;
+    CGFloat containerWidth = containerView.bounds.size.width;
+    CGFloat containerHeight = containerView.bounds.size.height;
     
     CGRect upperRect = CGRectMake(0, 0, containerWidth, position.y);
     CGRect lowerRect = CGRectMake(0, position.y, containerWidth, containerHeight - position.y);
