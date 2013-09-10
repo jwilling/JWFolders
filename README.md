@@ -46,4 +46,4 @@ This library makes use of `CALayer`'s `renderInContext:` method to render the cu
  Please feel free to fork the project and improve it as much as possible!
 
 ##About Me
-I'm an 18-year-old developer and designer with a passion for great interface design and detail. See my [applications](http://appjon.com/applications.html), learn more [about me](http://appjon.com/about.html), or [get in touch](http://appjon.com/support.html). I'm on Twitter as well: `@j_willing`.
+I'm a developer and designer with a passion for great interface design and detail. See my [applications](http://appjon.com/applications.html), learn more [about me](http://appjon.com/about.html), or [get in touch](http://appjon.com/support.html). I'm on Twitter as well: [@willing](http://twitter.com/willing).
