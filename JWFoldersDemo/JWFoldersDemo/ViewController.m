@@ -37,11 +37,10 @@
     folder.direction = JWFoldersOpenDirectionUp;
     folder.contentBackgroundColor = [UIColor colorWithWhite:0.90 alpha:1.0];
     folder.shadowsEnabled = YES;
-	folder.shadowColor = [UIColor redColor];
+    folder.shadowColor = [UIColor redColor];
     folder.darkensBackground = NO;
     folder.showsNotch = YES;
     [folder open];
-
 }
 
 - (IBAction)openFolderDown:(id)sender {

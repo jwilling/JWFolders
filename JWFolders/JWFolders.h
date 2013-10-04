@@ -85,7 +85,10 @@ typedef NSInteger JWFoldersOpenDirection;
  * The moving pane will have a shadow with a constant position
  * for performance reasons. Defaults to NO; */
 @property (nonatomic, assign) BOOL shadowsEnabled;
-@property (nonatomic, strong) UIColor * shadowColor;
+
+
+/* Sets the color of the shadow, only used if shadowsEnabled = YES */
+@property (nonatomic, strong) UIColor *shadowColor;
 
 
 /* Experimental setting that sets the shouldRasterize property
