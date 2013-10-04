@@ -87,6 +87,10 @@ typedef NSInteger JWFoldersOpenDirection;
 @property (nonatomic, assign) BOOL shadowsEnabled;
 
 
+/* Sets the color of the shadow, only used if shadowsEnabled = YES */
+@property (nonatomic, strong) UIColor *shadowColor;
+
+
 /* Experimental setting that sets the shouldRasterize property
  * on the content view's layer. Defaults to NO. */
 @property (nonatomic, assign) BOOL shouldRasterizeContent;
