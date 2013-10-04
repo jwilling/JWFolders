@@ -6,7 +6,7 @@
 @synthesize sampleFolder = _sampleFolder;
 
 - (void)viewDidLoad {
-    self.sampleFolder = [[FolderViewController alloc] initWithNibName:NSStringFromClass([FolderViewController class]) bundle:nil];
+    self.sampleFolder = [[FolderViewController alloc] initWithNibName:nil bundle:nil];
 }
 
 #pragma mark - Folder Example
@@ -25,6 +25,22 @@
     folder.showsNotch = YES;
     [folder open];
     
+}
+
+- (IBAction)openFolderUpColoredShadow:(id)sender {
+    CGPoint openPoint = CGPointMake(CGRectGetWidth(self.view.frame) / 2, [sender frame].origin.y - 20);
+
+    JWFolders *folder = [JWFolders folder];
+    folder.contentView = self.sampleFolder.view;
+    folder.containerView = self.view;
+    folder.position = openPoint;
+    folder.direction = JWFoldersOpenDirectionUp;
+    folder.contentBackgroundColor = [UIColor colorWithWhite:0.90 alpha:1.0];
+    folder.shadowsEnabled = YES;
+    folder.shadowColor = [UIColor redColor];
+    folder.darkensBackground = NO;
+    folder.showsNotch = YES;
+    [folder open];
 }
 
 - (IBAction)openFolderDown:(id)sender {
