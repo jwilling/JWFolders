@@ -103,7 +103,7 @@ const CGFloat JWFoldersOpeningDuration = 0.4f;
     innerShadowLayer.frame = shadowFrame;
     innerShadowLayer.shadowColor = self.shadowColor.CGColor;
     innerShadowLayer.shadowOffset = CGSizeZero;
-    innerShadowLayer.shadowOpacity = 0.5;
+    innerShadowLayer.shadowOpacity = 1.0;
     innerShadowLayer.shadowRadius = radius;
 
     innerShadowLayer.fillRule = kCAFillRuleEvenOdd;
