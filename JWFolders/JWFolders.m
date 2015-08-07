@@ -32,6 +32,8 @@ const CGFloat JWFoldersOpeningDuration = 0.4f;
 @interface JWFolders () {
     JWFolders *_strongSelf;
 }
+- (void)addShadowToView:(UIView *)view;
+
 - (JWFolderSplitView *)buttonForRect:(CGRect)aRect
                               screen:(UIImage *)screen
                             position:(CGPoint)position
@@ -79,6 +81,40 @@ const CGFloat JWFoldersOpeningDuration = 0.4f;
         _strongSelf = self;
     }
     return self;
+}
+
+- (void)addShadowToView:(UIView *)view
+{
+    CGFloat radius = (self.showsNotch) ? JWFoldersTriangleHeight : 3;
+    CGRect shadowFrame = view.bounds;
+    shadowFrame.size.width += radius * 4;
+    shadowFrame.origin.x -= radius * 2;
+
+    if (self.showsNotch) {
+        shadowFrame.size.height += radius;
+
+        // Move shadow layer up by radius if we are opening up from the bottom
+        if (self.direction == JWFoldersOpenDirectionUp) {
+            shadowFrame.origin.y -= radius;
+        }
+    }
+
+    CAShapeLayer * innerShadowLayer = [CAShapeLayer layer];
+    innerShadowLayer.frame = shadowFrame;
+    innerShadowLayer.shadowColor = self.shadowColor.CGColor;
+    innerShadowLayer.shadowOffset = CGSizeZero;
+    innerShadowLayer.shadowOpacity = 1.0;
+    innerShadowLayer.shadowRadius = radius;
+
+    innerShadowLayer.fillRule = kCAFillRuleEvenOdd;
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddRect(path, NULL, CGRectInset(innerShadowLayer.bounds, -20, -20));
+    CGPathAddRect(path, NULL, innerShadowLayer.bounds);
+    CGPathCloseSubpath(path);
+    innerShadowLayer.path = path;
+    CGPathRelease(path);
+
+    [view.layer addSublayer:innerShadowLayer];
 }
 
 - (void)open {
@@ -187,29 +223,33 @@ const CGFloat JWFoldersOpeningDuration = 0.4f;
     CGPoint toPoint = (CGPoint){ self.folderPoint.x, (up) ? (self.folderPoint.y - contentHeight) : (self.folderPoint.y + contentHeight)};
     
     if (self.shadowsEnabled) {
-        // add the inner shadows using UIImageViews, which might seem heavy but in fact they're
-        // rendered by the GPU, whereas a CALayer for instance is rendered by the CPU. We want
-        // all the rendering speed we can get. Besides, the images will get cached for faster reloads.
-        
-        UIImage *topShadow = nil;
-        UIImage *bottomShadow = nil;
-        if (self.showsNotch) {
-            topShadow = [UIImage imageNamed:up ? @"JWFolders.bundle/shadow_top" : @"JWFolders.bundle/shadow_top_notch"];
-            bottomShadow = [UIImage imageNamed:up ? @"JWFolders.bundle/shadow_low_notch" : @"JWFolders.bundle/shadow_low"];
-        } else {
-            topShadow = [UIImage imageNamed:@"JWFolders.bundle/shadow_top"];
-            bottomShadow = [UIImage imageNamed:@"JWFolders.bundle/shadow_low"];
-        }
 
-        UIImageView *topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, contentFrame.size.width, topShadow.size.height)];
-        UIImageView *bottomImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, contentFrame.size.height - (bottomShadow.size.height),
-                                                                                     contentFrame.size.width, bottomShadow.size.height)];
-        topImageView.image = topShadow;
-        bottomImageView.image = bottomShadow;
-        [self.contentViewContainer addSubview:topImageView];
-        [self.contentViewContainer addSubview:bottomImageView];
+        if (self.shadowColor) {
+            [self addShadowToView:self.contentViewContainer];
+        } else {
+            // add the inner shadows using UIImageViews, which might seem heavy but in fact they're
+            // rendered by the GPU, whereas a CALayer for instance is rendered by the CPU. We want
+            // all the rendering speed we can get. Besides, the images will get cached for faster reloads.
+
+            UIImage *topShadow = nil;
+            UIImage *bottomShadow = nil;
+            if (self.showsNotch) {
+                topShadow = [UIImage imageNamed:up ? @"JWFolders.bundle/shadow_top" : @"JWFolders.bundle/shadow_top_notch"];
+                bottomShadow = [UIImage imageNamed:up ? @"JWFolders.bundle/shadow_low_notch" : @"JWFolders.bundle/shadow_low"];
+            } else {
+                topShadow = [UIImage imageNamed:@"JWFolders.bundle/shadow_top"];
+                bottomShadow = [UIImage imageNamed:@"JWFolders.bundle/shadow_low"];
+            }
+
+            UIImageView *topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, contentFrame.size.width, topShadow.size.height)];
+            UIImageView *bottomImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, contentFrame.size.height - (bottomShadow.size.height), contentFrame.size.width, bottomShadow.size.height)];
+            topImageView.image = topShadow;
+            bottomImageView.image = bottomShadow;
+            [self.contentViewContainer addSubview:topImageView];
+            [self.contentViewContainer addSubview:bottomImageView];
+        }
     }
-    
+
     // animate the sliding of the moveable pane upwards / downwards
     CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     CABasicAnimation *move = [CABasicAnimation animationWithKeyPath:@"position"];
