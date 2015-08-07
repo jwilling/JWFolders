@@ -3,7 +3,7 @@
 ##Preview
 `JWFolders` is being used in my commercial application, [QuickWeather](http://itunes.apple.com/us/app/quickweather/id414898317?mt=8). Depicted here is a beta version of the app:
 
-![ExampleFolder](http://www.appjon.com/assets/github/jwfolders_quickweather.png)
+![ExampleFolder](http://www.jwilling.com/serve/github/jwfolders/preview.png)
 
 ##Usage
 Just include the entire folder, `JWFolders`, in your project. Import `JWFolders.h` in the class in which you wish to create the folder.
